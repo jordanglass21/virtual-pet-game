@@ -11,7 +11,8 @@ const GAMES = [
   {
     key: 'treatCatch',
     title: 'Treat Catch',
-    description: 'Catch falling treats with your basket for 30 seconds. Avoid the rotten food!',
+    description:
+      'Catch falling treats with your basket for 30 seconds, then survive the bonus round - miss a single treat and it\'s over!',
     GameComponent: TreatCatchGame,
   },
   {
