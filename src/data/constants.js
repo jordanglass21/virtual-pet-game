@@ -11,7 +11,6 @@ export const ACTION_COOLDOWN_MS = 20000;
 export const CARE_ACTIONS = {
   feed: { stat: 'hunger', amount: 30, growth: 5, reward: 3 },
   play: { stat: 'happiness', amount: 25, growth: 5, reward: 3 },
-  sleep: { stat: 'energy', amount: 35, growth: 5, reward: 3 },
   clean: { stat: 'cleanliness', amount: 30, growth: 5, reward: 3 },
 };
 
@@ -25,3 +24,16 @@ export const EVOLVE_THRESHOLD = 100;
 
 export const MINIGAME_DURATION_MS = 30000;
 export const MINIGAME_PAYOUT_MULTIPLIER = 3;
+
+// Sleep is automatic, not a manual action: the pet naps once energy drops
+// below the trigger, regenerating energy (and decaying other stats more
+// slowly) until the nap duration elapses or energy is full again.
+export const SLEEP_TRIGGER_THRESHOLD = 25;
+export const SLEEP_DURATION_MS = 45000;
+export const ENERGY_REGEN_PER_MIN = 12;
+export const SLEEP_DECAY_MULTIPLIER = 0.4;
+export const SLEEP_BONUS_HAPPINESS = 15;
+export const SLEEP_BONUS_GROWTH = 5;
+
+// Adults are lower-maintenance: stats decay slower once a pet is grown.
+export const ADULT_DECAY_MULTIPLIER = 0.7;

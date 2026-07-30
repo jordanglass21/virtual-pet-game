@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppShell from './components/layout/AppShell.jsx';
 import SpeciesSelect from './components/onboarding/SpeciesSelect.jsx';
 import PetStage from './components/pet/PetStage.jsx';
@@ -8,34 +8,70 @@ import GrowthBar from './components/pet/GrowthBar.jsx';
 import EvolutionBanner from './components/common/EvolutionBanner.jsx';
 import ShopModal from './components/shop/ShopModal.jsx';
 import MiniGameModal from './components/minigame/MiniGameModal.jsx';
-import { GameProvider, useGameState } from './state/GameContext.jsx';
+import { GameProvider, useGameDispatch, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 import { getPetMood } from './utils/petMood.js';
 
 function GameScreen({ onOpenMiniGame }) {
   const state = useGameState();
+  const dispatch = useGameDispatch();
   useGameTick();
+  const [activeActivity, setActiveActivity] = useState(null);
 
-  if (!state.pet) {
+  const pet = state.pet;
+
+  useEffect(() => {
+    if (!pet?.justWokeRested) return undefined;
+    const timeout = setTimeout(() => dispatch({ type: 'CLEAR_SLEEP_BONUS_FLAG' }), 4000);
+    return () => clearTimeout(timeout);
+  }, [pet?.justWokeRested, dispatch]);
+
+  if (!pet) {
     return <SpeciesSelect />;
   }
 
-  const isCritical = getPetMood(state.pet.stats) === 'critical';
+  const isSleeping = Boolean(pet.sleep?.isSleeping);
+  const mood = getPetMood(pet.stats, isSleeping);
+
+  function handleStartActivity(actionId) {
+    setActiveActivity(actionId);
+  }
+
+  function handleActivityComplete() {
+    dispatch({ type: 'CARE_ACTION', payload: { actionId: activeActivity, now: Date.now() } });
+    setActiveActivity(null);
+  }
+
+  function handleWake() {
+    dispatch({ type: 'WAKE_PET' });
+  }
 
   return (
     <div>
-      {state.pet.justEvolved && <EvolutionBanner petName={state.pet.name} />}
-      <PetStage pet={state.pet} room={state.room} />
+      {pet.justEvolved && <EvolutionBanner petName={pet.name} />}
+      <PetStage
+        pet={pet}
+        room={state.room}
+        activeActivity={activeActivity}
+        onActivityComplete={handleActivityComplete}
+      />
       <p style={{ textAlign: 'center' }}>
-        {state.pet.name} the {state.pet.stage}
+        {pet.name} the {pet.stage}
       </p>
-      {isCritical && <p className="critical-warning">⚠ {state.pet.name} urgently needs your help!</p>}
-      {state.pet.stage === 'baby' && <GrowthBar growth={state.pet.growth} />}
-      <StatBars stats={state.pet.stats} />
-      <ActionBar cooldowns={state.pet.cooldowns} />
+      {pet.justWokeRested && <p className="sleep-bonus-indicator">✨ {pet.name} had a great nap! +happiness</p>}
+      {mood === 'critical' && <p className="critical-warning">⚠ {pet.name} urgently needs your help!</p>}
+      {pet.stage === 'baby' && <GrowthBar growth={pet.growth} />}
+      <StatBars stats={pet.stats} />
+      <ActionBar
+        cooldowns={pet.cooldowns}
+        isSleeping={isSleeping}
+        activeActivity={activeActivity}
+        onStartActivity={handleStartActivity}
+        onWake={handleWake}
+      />
       <div style={{ textAlign: 'center', marginTop: 10 }}>
         <button type="button" className="btn-retro" onClick={onOpenMiniGame}>
-          Play Treat Catch
+          Games
         </button>
       </div>
     </div>

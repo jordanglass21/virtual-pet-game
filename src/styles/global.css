@@ -347,6 +347,58 @@ h1, h2, h3 {
   width: 30%;
 }
 
+/* ---- interactive care activities ---- */
+
+.activity-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+}
+
+.activity-hint {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--panel-darker);
+  padding: 2px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  border-radius: 4px;
+}
+
+.activity-target {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  animation: target-pulse 1s ease-in-out infinite;
+}
+
+@keyframes target-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.12); }
+}
+
+.sleeping-indicator {
+  text-align: center;
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.sleep-bonus-indicator {
+  text-align: center;
+  font-size: 12px;
+  color: var(--good);
+  font-weight: bold;
+  margin: 4px 0;
+}
+
 /* ---- mini-game ---- */
 
 .treat-game-area {

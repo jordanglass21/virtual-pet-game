@@ -7,10 +7,10 @@ const BADGE_CLASS = {
   accessory: 'clothing-badge-accessory',
 };
 
-export default function PetSprite({ speciesId, stage, stats, equipped }) {
+export default function PetSprite({ speciesId, stage, stats, equipped, isSleeping }) {
   return (
     <div className="pet-sprite">
-      <PetImage speciesId={speciesId} stage={stage} stats={stats} />
+      <PetImage speciesId={speciesId} stage={stage} stats={stats} isSleeping={isSleeping} />
       {Object.entries(equipped ?? {}).map(([slot, itemId]) => {
         if (!itemId) return null;
         const item = SHOP_ITEMS_BY_ID[itemId];
