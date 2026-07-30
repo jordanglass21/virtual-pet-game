@@ -497,6 +497,43 @@ h1, h2, h3 {
   border: 2px solid #5c3d1f;
 }
 
+.dino-game-area {
+  position: relative;
+  margin: 0 auto;
+  background: #f7f7f2;
+  border-top: 2px solid var(--panel-darker);
+  border-left: 2px solid var(--panel-darker);
+  border-bottom: 2px solid var(--panel-light);
+  border-right: 2px solid var(--panel-light);
+  overflow: hidden;
+}
+
+.dino-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #555555;
+}
+
+.dino-character {
+  position: absolute;
+  background: #3d3d3d;
+  border-radius: 2px;
+}
+
+.dino-cactus {
+  position: absolute;
+  background: #2f7a3d;
+  border-radius: 2px;
+}
+
+.dino-ptero {
+  position: absolute;
+  background: #7a4fae;
+  border-radius: 2px;
+}
+
 /* ---- small screens ---- */
 
 @media (max-width: 380px) {

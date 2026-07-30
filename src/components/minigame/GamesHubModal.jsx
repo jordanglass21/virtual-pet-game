@@ -3,6 +3,7 @@ import Modal from '../common/Modal.jsx';
 import MiniGameModal from './MiniGameModal.jsx';
 import TreatCatchGame from './TreatCatchGame.jsx';
 import WhackAMoleGame from './WhackAMoleGame.jsx';
+import DinoRunGame from './DinoRunGame.jsx';
 import { useGameState } from '../../state/GameContext.jsx';
 
 const GAMES = [
@@ -17,6 +18,12 @@ const GAMES = [
     title: 'Whack-a-Mole',
     description: 'Click the moles as they pop up before time runs out!',
     GameComponent: WhackAMoleGame,
+  },
+  {
+    key: 'dinoRun',
+    title: 'Dino Run',
+    description: 'Jump and duck to survive as long as you can. Speed picks up the longer you last!',
+    GameComponent: DinoRunGame,
   },
 ];
 
