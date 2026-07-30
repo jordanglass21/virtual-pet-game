@@ -183,3 +183,21 @@ h1, h2, h3 {
   width: 90px;
   height: 90px;
 }
+
+/* ---- modal ---- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 16px;
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 360px;
+}
