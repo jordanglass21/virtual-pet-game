@@ -34,10 +34,11 @@ const CACTUS_MAX_H = 28;
 const CACTUS_MIN_W = 9;
 const CACTUS_MAX_W = 15;
 
-// Tall enough that only a super jump (~89 units peak) clears them, but with
-// more headroom than a razor-thin margin so the timing isn't punishing.
-const TALL_CACTUS_MIN_H = 65;
-const TALL_CACTUS_MAX_H = 78;
+// Tall enough that a regular jump (~63 units peak) can't reliably clear
+// them, while the super jump (~89 units peak) clears them with room to
+// spare - kept fairly low so the timing isn't punishing.
+const TALL_CACTUS_MIN_H = 55;
+const TALL_CACTUS_MAX_H = 68;
 const TALL_CACTUS_MIN_W = 12;
 const TALL_CACTUS_MAX_W = 18;
 
