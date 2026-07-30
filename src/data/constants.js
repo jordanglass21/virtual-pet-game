@@ -22,3 +22,6 @@ export const REWARD_ELIGIBLE_BELOW = 90;
 export const DAILY_CHECKIN_BONUS = 10;
 
 export const EVOLVE_THRESHOLD = 100;
+
+export const MINIGAME_DURATION_MS = 30000;
+export const MINIGAME_PAYOUT_MULTIPLIER = 3;
