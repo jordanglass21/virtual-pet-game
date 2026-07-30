@@ -201,3 +201,127 @@ h1, h2, h3 {
   width: 100%;
   max-width: 360px;
 }
+
+/* ---- shop ---- */
+
+.shop-item-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.shop-item-card {
+  background: var(--panel);
+  border-top: 2px solid var(--panel-light);
+  border-left: 2px solid var(--panel-light);
+  border-bottom: 2px solid var(--panel-darker);
+  border-right: 2px solid var(--panel-darker);
+  padding: 6px;
+  text-align: center;
+}
+
+.shop-item-preview {
+  width: 100%;
+  height: 48px;
+  margin-bottom: 4px;
+}
+
+.shop-item-name {
+  font-size: 11px;
+  margin-bottom: 4px;
+  min-height: 26px;
+}
+
+/* ---- room / pet stage ---- */
+
+.pet-stage {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-top: 2px solid var(--panel-darker);
+  border-left: 2px solid var(--panel-darker);
+  border-bottom: 2px solid var(--panel-light);
+  border-right: 2px solid var(--panel-light);
+}
+
+.room-background {
+  position: absolute;
+  inset: 0;
+}
+
+.pet-stage-sprite {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.pet-sprite {
+  position: relative;
+  display: inline-block;
+}
+
+.furniture-item {
+  position: absolute;
+  z-index: 2;
+}
+
+.furniture-floor-left {
+  left: 6%;
+  bottom: 6%;
+  width: 22%;
+  height: 24%;
+}
+
+.furniture-floor-right {
+  right: 6%;
+  bottom: 6%;
+  width: 22%;
+  height: 24%;
+}
+
+.furniture-wall {
+  left: 50%;
+  top: 6%;
+  width: 26%;
+  height: 22%;
+  transform: translateX(-50%);
+}
+
+.furniture-rug {
+  left: 50%;
+  bottom: 2%;
+  width: 55%;
+  height: 16%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.clothing-badge {
+  position: absolute;
+  aspect-ratio: 1;
+}
+
+.clothing-badge-hat {
+  top: -6%;
+  left: 50%;
+  width: 40%;
+  transform: translateX(-50%);
+}
+
+.clothing-badge-outfit {
+  top: 58%;
+  left: 50%;
+  width: 34%;
+  transform: translateX(-50%);
+}
+
+.clothing-badge-accessory {
+  top: 38%;
+  left: 66%;
+  width: 30%;
+}

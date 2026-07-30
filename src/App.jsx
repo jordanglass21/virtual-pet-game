@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import AppShell from './components/layout/AppShell.jsx';
 import SpeciesSelect from './components/onboarding/SpeciesSelect.jsx';
-import PetImage from './components/pet/PetImage.jsx';
+import PetStage from './components/pet/PetStage.jsx';
 import StatBars from './components/pet/StatBars.jsx';
 import ActionBar from './components/pet/ActionBar.jsx';
 import GrowthBar from './components/pet/GrowthBar.jsx';
 import EvolutionBanner from './components/common/EvolutionBanner.jsx';
+import ShopModal from './components/shop/ShopModal.jsx';
 import { GameProvider, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 
@@ -19,7 +21,7 @@ function GameScreen() {
   return (
     <div>
       {state.pet.justEvolved && <EvolutionBanner petName={state.pet.name} />}
-      <PetImage speciesId={state.pet.speciesId} stage={state.pet.stage} stats={state.pet.stats} />
+      <PetStage pet={state.pet} room={state.room} />
       <p style={{ textAlign: 'center' }}>
         {state.pet.name} the {state.pet.stage}
       </p>
@@ -30,19 +32,22 @@ function GameScreen() {
   );
 }
 
-function AppShellWithState() {
+function AppShellWithState({ onOpenShop }) {
   const state = useGameState();
   return (
-    <AppShell petName={state.pet?.name} currency={state.currency}>
+    <AppShell petName={state.pet?.name} currency={state.currency} onOpenShop={state.pet ? onOpenShop : undefined}>
       <GameScreen />
     </AppShell>
   );
 }
 
 function App() {
+  const [shopOpen, setShopOpen] = useState(false);
+
   return (
     <GameProvider>
-      <AppShellWithState />
+      <AppShellWithState onOpenShop={() => setShopOpen(true)} />
+      {shopOpen && <ShopModal onClose={() => setShopOpen(false)} />}
     </GameProvider>
   );
 }
