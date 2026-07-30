@@ -3,7 +3,7 @@ import Modal from '../common/Modal.jsx';
 import MiniGameModal from './MiniGameModal.jsx';
 import TreatCatchGame from './TreatCatchGame.jsx';
 import WhackAMoleGame from './WhackAMoleGame.jsx';
-import BlobRunGame from './BlobRunGame.jsx';
+import PetRunGame from './PetRunGame.jsx';
 import SlotMachineModal from './SlotMachineModal.jsx';
 import { useGameState } from '../../state/GameContext.jsx';
 
@@ -21,10 +21,11 @@ const GAMES = [
     GameComponent: WhackAMoleGame,
   },
   {
-    key: 'blobRun',
-    title: 'Blob Run',
-    description: 'Jump and duck to survive as long as you can. Speed picks up the longer you last!',
-    GameComponent: BlobRunGame,
+    key: 'petRun',
+    title: 'Pet Run',
+    description:
+      'Jump and duck to survive as long as you can. Hold down then jump for a super jump over tall obstacles!',
+    GameComponent: PetRunGame,
   },
   {
     key: 'slotMachine',

@@ -6,15 +6,18 @@ import { useGameDispatch } from '../../state/GameContext.jsx';
 // `bottom` at render time - this keeps the jump/duck/obstacle collision math
 // independent of screen coordinates.
 const GAME_WIDTH = 220;
-const GAME_HEIGHT = 110;
+const GAME_HEIGHT = 130;
 const GROUND_MARGIN = 12;
-const BLOB_X = 20;
+const PET_X = 20;
 
 const STAND_SIZE = { width: 20, height: 24 };
 const DUCK_SIZE = { width: 28, height: 13 };
 
 const GRAVITY = 1400; // px/s^2
 const JUMP_VELOCITY = 420; // px/s upward
+// Holding duck, then jumping, launches a much higher "super jump" -
+// needed to clear the tall obstacles introduced later in a run.
+const SUPER_JUMP_VELOCITY = 500;
 
 const SPEED_START = 140; // px/s
 const SPEED_RAMP_PER_SEC = 3;
@@ -22,18 +25,24 @@ const SPEED_MAX = 300;
 
 const MIN_GAP_PX = 100;
 const MAX_GAP_PX = 200;
-const PTERO_INTRODUCE_AFTER_SEC = 8;
-const PTERO_CHANCE = 0.3;
+const SPECIAL_OBSTACLE_INTRODUCE_AFTER_SEC = 8;
+const PTERO_CHANCE = 0.25;
+const TALL_CHANCE = 0.25;
 
 const CACTUS_MIN_H = 16;
 const CACTUS_MAX_H = 28;
 const CACTUS_MIN_W = 9;
 const CACTUS_MAX_W = 15;
 
+const TALL_CACTUS_MIN_H = 70;
+const TALL_CACTUS_MAX_H = 85;
+const TALL_CACTUS_MIN_W = 12;
+const TALL_CACTUS_MAX_W = 18;
+
 const PTERO_SIZE = { width: 24, height: 13 };
 const PTERO_BOTTOM_AG = 18;
 
-const BLOB_RUN_PAYOUT_PER_SECOND = 2;
+const PET_RUN_PAYOUT_PER_SECOND = 2;
 
 let nextObstacleId = 0;
 
@@ -41,7 +50,7 @@ function randomBetween(min, max) {
   return min + Math.random() * (max - min);
 }
 
-export default function BlobRunGame({ onFinish }) {
+export default function PetRunGame({ onFinish }) {
   const dispatch = useGameDispatch();
   const [airborneY, setAirborneY] = useState(0);
   const [isDucking, setIsDucking] = useState(false);
@@ -95,10 +104,10 @@ export default function BlobRunGame({ onFinish }) {
       stopped = true;
       const survivalSeconds = elapsed / 1000;
       const score = Math.floor(elapsed / 100);
-      const payout = Math.max(0, Math.floor(survivalSeconds * BLOB_RUN_PAYOUT_PER_SECOND));
+      const payout = Math.max(0, Math.floor(survivalSeconds * PET_RUN_PAYOUT_PER_SECOND));
       dispatchRef.current({
         type: 'RECORD_MINIGAME_RESULT',
-        payload: { game: 'blobRun', score, payout },
+        payload: { game: 'petRun', score, payout },
       });
       onFinishRef.current({ score, payout });
     }
@@ -113,7 +122,7 @@ export default function BlobRunGame({ onFinish }) {
       const speed = Math.min(SPEED_MAX, SPEED_START + (elapsed / 1000) * SPEED_RAMP_PER_SEC);
 
       if (wantsJumpRef.current && airborne === 0) {
-        velocity = JUMP_VELOCITY;
+        velocity = wantsDuckRef.current ? SUPER_JUMP_VELOCITY : JUMP_VELOCITY;
       }
       wantsJumpRef.current = false;
       const ducking = wantsDuckRef.current && airborne === 0;
@@ -132,8 +141,14 @@ export default function BlobRunGame({ onFinish }) {
       spawnTimer += dt * 1000;
       if (spawnTimer >= nextSpawnMs) {
         spawnTimer = 0;
-        const canBePtero = elapsed / 1000 > PTERO_INTRODUCE_AFTER_SEC && Math.random() < PTERO_CHANCE;
-        if (canBePtero) {
+        let obstacleType = 'cactus';
+        if (elapsed / 1000 > SPECIAL_OBSTACLE_INTRODUCE_AFTER_SEC) {
+          const roll = Math.random();
+          if (roll < PTERO_CHANCE) obstacleType = 'ptero';
+          else if (roll < PTERO_CHANCE + TALL_CHANCE) obstacleType = 'tallCactus';
+        }
+
+        if (obstacleType === 'ptero') {
           obstacleList = [
             ...obstacleList,
             {
@@ -143,6 +158,18 @@ export default function BlobRunGame({ onFinish }) {
               width: PTERO_SIZE.width,
               height: PTERO_SIZE.height,
               bottomAG: PTERO_BOTTOM_AG,
+            },
+          ];
+        } else if (obstacleType === 'tallCactus') {
+          obstacleList = [
+            ...obstacleList,
+            {
+              id: nextObstacleId++,
+              type: 'tallCactus',
+              x: GAME_WIDTH,
+              width: randomBetween(TALL_CACTUS_MIN_W, TALL_CACTUS_MAX_W),
+              height: randomBetween(TALL_CACTUS_MIN_H, TALL_CACTUS_MAX_H),
+              bottomAG: 0,
             },
           ];
         } else {
@@ -164,15 +191,15 @@ export default function BlobRunGame({ onFinish }) {
       obstacleList = obstacleList.map((o) => ({ ...o, x: o.x - speed * dt })).filter((o) => o.x + o.width > 0);
       setObstacles(obstacleList);
 
-      const blobSize = ducking ? DUCK_SIZE : STAND_SIZE;
-      const blobLeft = BLOB_X;
-      const blobRight = BLOB_X + blobSize.width;
-      const blobBottomAG = airborne;
-      const blobTopAG = airborne + blobSize.height;
+      const petSize = ducking ? DUCK_SIZE : STAND_SIZE;
+      const petLeft = PET_X;
+      const petRight = PET_X + petSize.width;
+      const petBottomAG = airborne;
+      const petTopAG = airborne + petSize.height;
 
       for (const o of obstacleList) {
-        const horizontalOverlap = blobRight > o.x && blobLeft < o.x + o.width;
-        const verticalOverlap = blobBottomAG < o.bottomAG + o.height && blobTopAG > o.bottomAG;
+        const horizontalOverlap = petRight > o.x && petLeft < o.x + o.width;
+        const verticalOverlap = petBottomAG < o.bottomAG + o.height && petTopAG > o.bottomAG;
         if (horizontalOverlap && verticalOverlap) {
           endRun();
           return;
@@ -189,34 +216,35 @@ export default function BlobRunGame({ onFinish }) {
     };
   }, []);
 
-  const blobSize = isDucking ? DUCK_SIZE : STAND_SIZE;
+  const petSize = isDucking ? DUCK_SIZE : STAND_SIZE;
+  const obstacleClass = { cactus: 'pet-run-cactus', tallCactus: 'pet-run-tall-cactus', ptero: 'pet-run-ptero' };
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
         <span>Score: {Math.floor(elapsedMs / 100)}</span>
       </div>
-      <div className="blob-run-area" style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}>
-        <div className="blob-run-ground" style={{ bottom: GROUND_MARGIN }} />
+      <div className="pet-run-area" style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}>
+        <div className="pet-run-ground" style={{ bottom: GROUND_MARGIN }} />
         <div
-          className="blob-run-character"
+          className="pet-run-character"
           style={{
-            left: BLOB_X,
-            width: blobSize.width,
-            height: blobSize.height,
+            left: PET_X,
+            width: petSize.width,
+            height: petSize.height,
             bottom: GROUND_MARGIN + airborneY,
           }}
         />
         {obstacles.map((o) => (
           <div
             key={o.id}
-            className={o.type === 'ptero' ? 'blob-run-ptero' : 'blob-run-cactus'}
+            className={obstacleClass[o.type]}
             style={{ left: o.x, width: o.width, height: o.height, bottom: GROUND_MARGIN + o.bottomAG }}
           />
         ))}
       </div>
       <p style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
-        Space/↑ to jump, ↓ to duck. Avoid the cacti and pterodactyls!
+        Space/↑ to jump, ↓ to duck. Hold ↓ then jump for a super jump over tall obstacles!
       </p>
     </div>
   );

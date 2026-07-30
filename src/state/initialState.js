@@ -13,7 +13,7 @@ export function createInitialState() {
     miniGames: {
       treatCatch: { highScore: 0 },
       whackAMole: { highScore: 0 },
-      blobRun: { highScore: 0 },
+      petRun: { highScore: 0 },
       slotMachine: { highScore: 0 },
     },
     lastCheckInDate: null,
