@@ -8,6 +8,8 @@ import GrowthBar from './components/pet/GrowthBar.jsx';
 import EvolutionBanner from './components/common/EvolutionBanner.jsx';
 import ShopModal from './components/shop/ShopModal.jsx';
 import GamesHubModal from './components/minigame/GamesHubModal.jsx';
+import SettingsModal from './components/settings/SettingsModal.jsx';
+import HelpModal from './components/help/HelpModal.jsx';
 import { GameProvider, useGameDispatch, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 import { getPetMood } from './utils/petMood.js';
@@ -78,10 +80,16 @@ function GameScreen({ onOpenMiniGame }) {
   );
 }
 
-function AppShellWithState({ onOpenShop, onOpenMiniGame }) {
+function AppShellWithState({ onOpenShop, onOpenMiniGame, onOpenSettings, onOpenHelp }) {
   const state = useGameState();
   return (
-    <AppShell petName={state.pet?.name} currency={state.currency} onOpenShop={state.pet ? onOpenShop : undefined}>
+    <AppShell
+      petName={state.pet?.name}
+      currency={state.currency}
+      onOpenShop={state.pet ? onOpenShop : undefined}
+      onOpenSettings={state.pet ? onOpenSettings : undefined}
+      onOpenHelp={onOpenHelp}
+    >
       <GameScreen onOpenMiniGame={onOpenMiniGame} />
     </AppShell>
   );
@@ -90,12 +98,21 @@ function AppShellWithState({ onOpenShop, onOpenMiniGame }) {
 function App() {
   const [shopOpen, setShopOpen] = useState(false);
   const [miniGameOpen, setMiniGameOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   return (
     <GameProvider>
-      <AppShellWithState onOpenShop={() => setShopOpen(true)} onOpenMiniGame={() => setMiniGameOpen(true)} />
+      <AppShellWithState
+        onOpenShop={() => setShopOpen(true)}
+        onOpenMiniGame={() => setMiniGameOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenHelp={() => setHelpOpen(true)}
+      />
       {shopOpen && <ShopModal onClose={() => setShopOpen(false)} />}
       {miniGameOpen && <GamesHubModal onClose={() => setMiniGameOpen(false)} />}
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
+      {helpOpen && <HelpModal onClose={() => setHelpOpen(false)} />}
     </GameProvider>
   );
 }

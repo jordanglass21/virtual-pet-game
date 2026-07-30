@@ -1,5 +1,6 @@
 import { SPECIES } from '../data/species.js';
 import { SHOP_ITEMS_BY_ID } from '../data/shopItems.js';
+import { createInitialState } from './initialState.js';
 import {
   CARE_ACTIONS,
   ACTION_COOLDOWN_MS,
@@ -74,6 +75,10 @@ export function gameReducer(state, action) {
   switch (action.type) {
     case 'HYDRATE': {
       return action.payload;
+    }
+
+    case 'RESET_GAME': {
+      return createInitialState();
     }
 
     case 'SELECT_SPECIES': {
