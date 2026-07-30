@@ -1,10 +1,13 @@
 import AppShell from './components/layout/AppShell.jsx';
 import SpeciesSelect from './components/onboarding/SpeciesSelect.jsx';
 import PetImage from './components/pet/PetImage.jsx';
+import StatBars from './components/pet/StatBars.jsx';
 import { GameProvider, useGameState } from './state/GameContext.jsx';
+import { useGameTick } from './hooks/useGameTick.js';
 
 function GameScreen() {
   const state = useGameState();
+  useGameTick();
 
   if (!state.pet) {
     return <SpeciesSelect />;
@@ -16,6 +19,7 @@ function GameScreen() {
       <p style={{ textAlign: 'center' }}>
         {state.pet.name} the {state.pet.stage}
       </p>
+      <StatBars stats={state.pet.stats} />
     </div>
   );
 }
