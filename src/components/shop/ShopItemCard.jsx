@@ -5,6 +5,7 @@ export default function ShopItemCard({ item }) {
   const dispatch = useGameDispatch();
   const owned = state.inventory.includes(item.id);
   const affordable = state.currency >= item.price;
+  const locked = item.minStage === 'adult' && state.pet?.stage !== 'adult';
 
   function buy() {
     dispatch({ type: 'BUY_ITEM', payload: { id: item.id, price: item.price } });
@@ -38,11 +39,15 @@ export default function ShopItemCard({ item }) {
 
   return (
     <div className="shop-item-card">
-      <div className="shop-item-preview">
+      <div className="shop-item-preview" style={locked ? { opacity: 0.35 } : undefined}>
         <item.Render />
       </div>
       <div className="shop-item-name">{item.name}</div>
-      {owned ? (
+      {locked ? (
+        <button type="button" className="btn-retro" disabled>
+          Adult only
+        </button>
+      ) : owned ? (
         <button
           type="button"
           className="btn-retro"

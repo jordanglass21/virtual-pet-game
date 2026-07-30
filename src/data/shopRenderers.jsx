@@ -173,3 +173,47 @@ export function MeadowBackground() {
 export function DefaultBackground() {
   return <div style={{ width: '100%', height: '100%', background: 'var(--panel)' }} />;
 }
+
+// Adult-exclusive items.
+
+export function CrownIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="100%" height="100%">
+      <polygon
+        points="8,32 8,16 16,24 24,12 32,24 40,16 40,32"
+        fill="#ffd400"
+        stroke="#a3831c"
+        strokeWidth="2"
+      />
+      <rect x="8" y="32" width="32" height="6" fill="#ffd400" stroke="#a3831c" strokeWidth="2" />
+      <circle cx="16" cy="18" r="2" fill="#d81b1b" />
+      <circle cx="24" cy="14" r="2" fill="#3b7dd8" />
+      <circle cx="32" cy="18" r="2" fill="#d81b1b" />
+    </svg>
+  );
+}
+
+export function TrophyIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="100%" height="100%">
+      <path d="M14 6 H34 V18 A10 10 0 0 1 14 18 Z" fill="#ffd400" stroke="#a3831c" strokeWidth="2" />
+      <rect x="21" y="28" width="6" height="8" fill="#a3831c" />
+      <rect x="14" y="36" width="20" height="5" fill="#ffd400" stroke="#a3831c" strokeWidth="2" />
+      <path d="M14 8 H6 V14 A8 8 0 0 0 14 22" fill="none" stroke="#a3831c" strokeWidth="2" />
+      <path d="M34 8 H42 V14 A8 8 0 0 1 34 22" fill="none" stroke="#a3831c" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function CastleBackground() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background:
+          'linear-gradient(to bottom, #6a5fa8 0%, #6a5fa8 55%, #8a7fc0 55%, #8a7fc0 70%, #4a4470 70%, #4a4470 100%)',
+      }}
+    />
+  );
+}
