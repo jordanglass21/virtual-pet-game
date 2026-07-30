@@ -20,8 +20,8 @@ export default function HelpModal({ onClose }) {
             it naps for a bonus!
           </li>
           <li>
-            <strong>Play</strong> - open Games to play Treat Catch or Whack-a-Mole, which also makes your pet
-            happy.
+            <strong>Play</strong> - open Games to play Treat Catch, Whack-a-Mole, or Blob Run, which also makes
+            your pet happy.
           </li>
         </ul>
         <p>
@@ -31,6 +31,10 @@ export default function HelpModal({ onClose }) {
         <p>
           <strong>Growing up</strong> - every care action and game you play helps your pet grow. Once it's grown
           enough, it evolves into an adult and unlocks special items in the Shop!
+        </p>
+        <p>
+          <strong>Slot Machine</strong> - also in Games, but it's a real gamble: bet coins and spin for a chance to
+          win big (or lose the bet). Doesn't affect your pet's stats either way.
         </p>
       </div>
     </Modal>

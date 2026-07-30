@@ -8,7 +8,7 @@ import { useGameDispatch } from '../../state/GameContext.jsx';
 const GAME_WIDTH = 220;
 const GAME_HEIGHT = 110;
 const GROUND_MARGIN = 12;
-const DINO_X = 20;
+const BLOB_X = 20;
 
 const STAND_SIZE = { width: 20, height: 24 };
 const DUCK_SIZE = { width: 28, height: 13 };
@@ -33,7 +33,7 @@ const CACTUS_MAX_W = 15;
 const PTERO_SIZE = { width: 24, height: 13 };
 const PTERO_BOTTOM_AG = 18;
 
-const DINO_PAYOUT_PER_SECOND = 2;
+const BLOB_RUN_PAYOUT_PER_SECOND = 2;
 
 let nextObstacleId = 0;
 
@@ -41,7 +41,7 @@ function randomBetween(min, max) {
   return min + Math.random() * (max - min);
 }
 
-export default function DinoRunGame({ onFinish }) {
+export default function BlobRunGame({ onFinish }) {
   const dispatch = useGameDispatch();
   const [airborneY, setAirborneY] = useState(0);
   const [isDucking, setIsDucking] = useState(false);
@@ -95,10 +95,10 @@ export default function DinoRunGame({ onFinish }) {
       stopped = true;
       const survivalSeconds = elapsed / 1000;
       const score = Math.floor(elapsed / 100);
-      const payout = Math.max(0, Math.floor(survivalSeconds * DINO_PAYOUT_PER_SECOND));
+      const payout = Math.max(0, Math.floor(survivalSeconds * BLOB_RUN_PAYOUT_PER_SECOND));
       dispatchRef.current({
         type: 'RECORD_MINIGAME_RESULT',
-        payload: { game: 'dinoRun', score, payout },
+        payload: { game: 'blobRun', score, payout },
       });
       onFinishRef.current({ score, payout });
     }
@@ -164,15 +164,15 @@ export default function DinoRunGame({ onFinish }) {
       obstacleList = obstacleList.map((o) => ({ ...o, x: o.x - speed * dt })).filter((o) => o.x + o.width > 0);
       setObstacles(obstacleList);
 
-      const dinoSize = ducking ? DUCK_SIZE : STAND_SIZE;
-      const dinoLeft = DINO_X;
-      const dinoRight = DINO_X + dinoSize.width;
-      const dinoBottomAG = airborne;
-      const dinoTopAG = airborne + dinoSize.height;
+      const blobSize = ducking ? DUCK_SIZE : STAND_SIZE;
+      const blobLeft = BLOB_X;
+      const blobRight = BLOB_X + blobSize.width;
+      const blobBottomAG = airborne;
+      const blobTopAG = airborne + blobSize.height;
 
       for (const o of obstacleList) {
-        const horizontalOverlap = dinoRight > o.x && dinoLeft < o.x + o.width;
-        const verticalOverlap = dinoBottomAG < o.bottomAG + o.height && dinoTopAG > o.bottomAG;
+        const horizontalOverlap = blobRight > o.x && blobLeft < o.x + o.width;
+        const verticalOverlap = blobBottomAG < o.bottomAG + o.height && blobTopAG > o.bottomAG;
         if (horizontalOverlap && verticalOverlap) {
           endRun();
           return;
@@ -189,28 +189,28 @@ export default function DinoRunGame({ onFinish }) {
     };
   }, []);
 
-  const dinoSize = isDucking ? DUCK_SIZE : STAND_SIZE;
+  const blobSize = isDucking ? DUCK_SIZE : STAND_SIZE;
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
         <span>Score: {Math.floor(elapsedMs / 100)}</span>
       </div>
-      <div className="dino-game-area" style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}>
-        <div className="dino-ground" style={{ bottom: GROUND_MARGIN }} />
+      <div className="blob-run-area" style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}>
+        <div className="blob-run-ground" style={{ bottom: GROUND_MARGIN }} />
         <div
-          className="dino-character"
+          className="blob-run-character"
           style={{
-            left: DINO_X,
-            width: dinoSize.width,
-            height: dinoSize.height,
+            left: BLOB_X,
+            width: blobSize.width,
+            height: blobSize.height,
             bottom: GROUND_MARGIN + airborneY,
           }}
         />
         {obstacles.map((o) => (
           <div
             key={o.id}
-            className={o.type === 'ptero' ? 'dino-ptero' : 'dino-cactus'}
+            className={o.type === 'ptero' ? 'blob-run-ptero' : 'blob-run-cactus'}
             style={{ left: o.x, width: o.width, height: o.height, bottom: GROUND_MARGIN + o.bottomAG }}
           />
         ))}

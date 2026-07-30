@@ -3,7 +3,8 @@ import Modal from '../common/Modal.jsx';
 import MiniGameModal from './MiniGameModal.jsx';
 import TreatCatchGame from './TreatCatchGame.jsx';
 import WhackAMoleGame from './WhackAMoleGame.jsx';
-import DinoRunGame from './DinoRunGame.jsx';
+import BlobRunGame from './BlobRunGame.jsx';
+import SlotMachineModal from './SlotMachineModal.jsx';
 import { useGameState } from '../../state/GameContext.jsx';
 
 const GAMES = [
@@ -20,10 +21,17 @@ const GAMES = [
     GameComponent: WhackAMoleGame,
   },
   {
-    key: 'dinoRun',
-    title: 'Dino Run',
+    key: 'blobRun',
+    title: 'Blob Run',
     description: 'Jump and duck to survive as long as you can. Speed picks up the longer you last!',
-    GameComponent: DinoRunGame,
+    GameComponent: BlobRunGame,
+  },
+  {
+    key: 'slotMachine',
+    title: 'Slot Machine',
+    description: 'Bet coins and spin the reels - match 3 for a big payout!',
+    CustomModal: SlotMachineModal,
+    statLabel: (state) => `Biggest win: $${state.miniGames.slotMachine?.highScore ?? 0}`,
   },
 ];
 
@@ -33,6 +41,10 @@ export default function GamesHubModal({ onClose }) {
 
   if (activeGameKey) {
     const game = GAMES.find((g) => g.key === activeGameKey);
+    if (game.CustomModal) {
+      const CustomModal = game.CustomModal;
+      return <CustomModal onClose={onClose} />;
+    }
     return (
       <MiniGameModal
         title={game.title}
@@ -55,7 +67,9 @@ export default function GamesHubModal({ onClose }) {
             onClick={() => setActiveGameKey(game.key)}
           >
             <div className="shop-item-name">{game.title}</div>
-            <div style={{ fontSize: 11 }}>High score: {state.miniGames[game.key]?.highScore ?? 0}</div>
+            <div style={{ fontSize: 11 }}>
+              {game.statLabel ? game.statLabel(state) : `High score: ${state.miniGames[game.key]?.highScore ?? 0}`}
+            </div>
           </button>
         ))}
       </div>

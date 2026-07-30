@@ -231,6 +231,20 @@ export function gameReducer(state, action) {
       };
     }
 
+    case 'SLOT_SPIN': {
+      const { bet, payout } = action.payload;
+      if (bet > state.currency) return state;
+      const prevBiggestWin = state.miniGames.slotMachine?.highScore ?? 0;
+      return {
+        ...state,
+        currency: state.currency - bet + payout,
+        miniGames: {
+          ...state.miniGames,
+          slotMachine: { highScore: Math.max(prevBiggestWin, payout) },
+        },
+      };
+    }
+
     default:
       return state;
   }
