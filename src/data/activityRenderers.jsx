@@ -1,5 +1,4 @@
-// Small CSS/SVG icon components for the click-target overlays used by the
-// interactive Feed/Play/Clean activities.
+// Small CSS/SVG icon components for the interactive Feed/Clean activities.
 
 export function DirtSpotIcon() {
   return (
@@ -26,11 +25,11 @@ export function FoodBiteIcon() {
   );
 }
 
-export function ToyIcon() {
+export function FoodBowlIcon() {
   return (
     <svg viewBox="0 0 32 32" width="100%" height="100%">
-      <circle cx="16" cy="16" r="12" fill="#4fa8e0" stroke="#1e5f8c" strokeWidth="2" />
-      <path d="M6 16 H26 M16 6 V26" stroke="#1e5f8c" strokeWidth="2" />
+      <ellipse cx="16" cy="14" rx="13" ry="5" fill="#e0762c" stroke="#7a3f12" strokeWidth="2" />
+      <path d="M4 14 L7 24 A10 5 0 0 0 25 24 L28 14 Z" fill="#c9c9c9" stroke="#888" strokeWidth="2" />
     </svg>
   );
 }

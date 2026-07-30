@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CARE_ACTIONS } from '../../data/constants.js';
 
-const LABELS = { feed: 'Feed', play: 'Play', clean: 'Clean' };
+const LABELS = { feed: 'Feed', clean: 'Clean' };
 
 export default function ActionBar({ cooldowns, isSleeping, activeActivity, onStartActivity, onWake }) {
   const [nowTick, setNowTick] = useState(Date.now());

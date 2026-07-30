@@ -15,6 +15,8 @@ import {
   SLEEP_BONUS_HAPPINESS,
   SLEEP_BONUS_GROWTH,
   ADULT_DECAY_MULTIPLIER,
+  MINIGAME_HAPPINESS_BONUS,
+  MINIGAME_GROWTH_BONUS,
 } from '../data/constants.js';
 import { clamp, isSameCalendarDay } from '../utils/time.js';
 
@@ -199,8 +201,23 @@ export function gameReducer(state, action) {
     case 'RECORD_MINIGAME_RESULT': {
       const { game, score, payout } = action.payload;
       const prevHighScore = state.miniGames[game]?.highScore ?? 0;
+
+      let pet = state.pet;
+      if (pet) {
+        pet = {
+          ...pet,
+          stats: {
+            ...pet.stats,
+            happiness: clamp(pet.stats.happiness + MINIGAME_HAPPINESS_BONUS, STAT_MIN, STAT_MAX),
+          },
+          growth: pet.growth + MINIGAME_GROWTH_BONUS,
+        };
+        pet = withEvolutionCheck(pet);
+      }
+
       return {
         ...state,
+        pet,
         currency: state.currency + payout,
         miniGames: {
           ...state.miniGames,
