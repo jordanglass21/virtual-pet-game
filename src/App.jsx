@@ -2,6 +2,7 @@ import AppShell from './components/layout/AppShell.jsx';
 import SpeciesSelect from './components/onboarding/SpeciesSelect.jsx';
 import PetImage from './components/pet/PetImage.jsx';
 import StatBars from './components/pet/StatBars.jsx';
+import ActionBar from './components/pet/ActionBar.jsx';
 import { GameProvider, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 
@@ -20,6 +21,7 @@ function GameScreen() {
         {state.pet.name} the {state.pet.stage}
       </p>
       <StatBars stats={state.pet.stats} />
+      <ActionBar cooldowns={state.pet.cooldowns} />
     </div>
   );
 }
