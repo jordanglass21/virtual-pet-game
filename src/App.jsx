@@ -6,6 +6,7 @@ import StatBars from './components/pet/StatBars.jsx';
 import ActionBar from './components/pet/ActionBar.jsx';
 import GrowthBar from './components/pet/GrowthBar.jsx';
 import EvolutionBanner from './components/common/EvolutionBanner.jsx';
+import EvolveRequirementsModal from './components/common/EvolveRequirementsModal.jsx';
 import ShopModal from './components/shop/ShopModal.jsx';
 import GamesHubModal from './components/minigame/GamesHubModal.jsx';
 import SettingsModal from './components/settings/SettingsModal.jsx';
@@ -13,12 +14,16 @@ import HelpModal from './components/help/HelpModal.jsx';
 import { GameProvider, useGameDispatch, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 import { getPetMood } from './utils/petMood.js';
+import { EVOLVE_THRESHOLD, EVOLVE_FLASH_DURATION_MS } from './data/constants.js';
+import { MCGUFFIN_ID, RITUAL_GROUNDS_ID } from './data/shopItems.js';
 
 function GameScreen({ onOpenMiniGame }) {
   const state = useGameState();
   const dispatch = useGameDispatch();
   useGameTick();
   const [activeActivity, setActiveActivity] = useState(null);
+  const [evolving, setEvolving] = useState(false);
+  const [showEvolveRequirements, setShowEvolveRequirements] = useState(false);
 
   const pet = state.pet;
 
@@ -34,6 +39,9 @@ function GameScreen({ onOpenMiniGame }) {
 
   const isSleeping = Boolean(pet.sleep?.isSleeping);
   const mood = getPetMood(pet.stats, isSleeping);
+  const readyToEvolve = pet.stage === 'baby' && pet.growth >= EVOLVE_THRESHOLD;
+  const hasMcGuffin = pet.equipped.accessory === MCGUFFIN_ID;
+  const hasRitualGrounds = state.room.backgroundId === RITUAL_GROUNDS_ID;
 
   function handleStartActivity(actionId) {
     setActiveActivity(actionId);
@@ -48,14 +56,35 @@ function GameScreen({ onOpenMiniGame }) {
     dispatch({ type: 'WAKE_PET' });
   }
 
+  function handleEvolveClick() {
+    if (!hasMcGuffin || !hasRitualGrounds) {
+      setShowEvolveRequirements(true);
+      return;
+    }
+    setEvolving(true);
+    setTimeout(() => {
+      dispatch({ type: 'EVOLVE_PET' });
+      setEvolving(false);
+    }, EVOLVE_FLASH_DURATION_MS);
+  }
+
   return (
     <div>
       {pet.justEvolved && <EvolutionBanner petName={pet.name} />}
+      {showEvolveRequirements && (
+        <EvolveRequirementsModal
+          petName={pet.name}
+          hasMcGuffin={hasMcGuffin}
+          hasRitualGrounds={hasRitualGrounds}
+          onClose={() => setShowEvolveRequirements(false)}
+        />
+      )}
       <PetStage
         pet={pet}
         room={state.room}
         activeActivity={activeActivity}
         onActivityComplete={handleActivityComplete}
+        isEvolving={evolving}
       />
       <p style={{ textAlign: 'center' }}>
         {pet.name} the {pet.stage}
@@ -63,6 +92,18 @@ function GameScreen({ onOpenMiniGame }) {
       {pet.justWokeRested && <p className="sleep-bonus-indicator">✨ {pet.name} had a great nap! +happiness</p>}
       {mood === 'critical' && <p className="critical-warning">⚠ {pet.name} urgently needs your help!</p>}
       {pet.stage === 'baby' && <GrowthBar growth={pet.growth} />}
+      {readyToEvolve && (
+        <div style={{ textAlign: 'center', margin: '6px 0' }}>
+          <button
+            type="button"
+            className="btn-retro"
+            onClick={handleEvolveClick}
+            disabled={Boolean(activeActivity) || evolving}
+          >
+            {evolving ? 'Evolving...' : 'Evolve'}
+          </button>
+        </div>
+      )}
       <StatBars stats={pet.stats} />
       <ActionBar
         cooldowns={pet.cooldowns}

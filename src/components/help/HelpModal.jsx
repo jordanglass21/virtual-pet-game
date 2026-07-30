@@ -30,7 +30,9 @@ export default function HelpModal({ onClose }) {
         </p>
         <p>
           <strong>Growing up</strong> - every care action and game you play helps your pet grow. Once it's grown
-          enough, it evolves into an adult and unlocks special items in the Shop!
+          enough, an <strong>Evolve</strong> button appears - but first you'll need to buy the McGuffin from the
+          Shop and equip it, and buy the Ritual Grounds background and set it. Once both are in place, click
+          Evolve to complete the ritual and unlock special adult-only items in the Shop!
         </p>
         <p>
           <strong>Slot Machine</strong> - also in Games, but it's a real gamble: bet coins and spin for a chance to

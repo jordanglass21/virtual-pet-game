@@ -156,6 +156,15 @@ h1, h2, h3 {
   filter: saturate(1.4) brightness(0.95);
 }
 
+.pet-image.evolving {
+  animation: evolve-flash 0.25s steps(1, end) 6;
+}
+
+@keyframes evolve-flash {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(2.5) saturate(0.2); }
+}
+
 @keyframes pet-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }

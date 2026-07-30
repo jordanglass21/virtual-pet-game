@@ -1,5 +1,5 @@
 import { SPECIES } from '../data/species.js';
-import { SHOP_ITEMS_BY_ID } from '../data/shopItems.js';
+import { SHOP_ITEMS_BY_ID, MCGUFFIN_ID, RITUAL_GROUNDS_ID } from '../data/shopItems.js';
 import { createInitialState } from './initialState.js';
 import {
   CARE_ACTIONS,
@@ -66,11 +66,6 @@ function applySleepTransition(pet, atTime) {
   return pet;
 }
 
-function withEvolutionCheck(pet) {
-  if (pet.stage !== 'baby' || pet.growth < EVOLVE_THRESHOLD) return pet;
-  return { ...pet, stage: 'adult', justEvolved: true };
-}
-
 export function gameReducer(state, action) {
   switch (action.type) {
     case 'HYDRATE': {
@@ -108,13 +103,21 @@ export function gameReducer(state, action) {
       if (!state.pet) return state;
       let pet = applyDecay(state.pet, action.payload.now);
       pet = applySleepTransition(pet, action.payload.now);
-      pet = withEvolutionCheck(pet);
       return { ...state, pet };
     }
 
     case 'CLEAR_EVOLUTION_FLAG': {
       if (!state.pet) return state;
       return { ...state, pet: { ...state.pet, justEvolved: false } };
+    }
+
+    case 'EVOLVE_PET': {
+      const pet = state.pet;
+      if (!pet || pet.stage !== 'baby') return state;
+      if (pet.growth < EVOLVE_THRESHOLD) return state;
+      if (pet.equipped.accessory !== MCGUFFIN_ID) return state;
+      if (state.room.backgroundId !== RITUAL_GROUNDS_ID) return state;
+      return { ...state, pet: { ...pet, stage: 'adult', justEvolved: true } };
     }
 
     case 'CLEAR_SLEEP_BONUS_FLAG': {
@@ -148,7 +151,6 @@ export function gameReducer(state, action) {
         growth: pet.growth + config.growth,
         cooldowns: { ...pet.cooldowns, [actionId]: at + ACTION_COOLDOWN_MS },
       };
-      pet = withEvolutionCheck(pet);
 
       return {
         ...state,
@@ -217,7 +219,6 @@ export function gameReducer(state, action) {
           },
           growth: pet.growth + MINIGAME_GROWTH_BONUS,
         };
-        pet = withEvolutionCheck(pet);
       }
 
       return {

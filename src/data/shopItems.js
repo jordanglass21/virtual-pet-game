@@ -18,7 +18,15 @@ import {
   CrownIcon,
   TrophyIcon,
   CastleBackground,
+  McGuffinIcon,
+  RitualGroundsBackground,
 } from './shopRenderers.jsx';
+
+// Required to trigger the baby-to-adult evolution ritual: the McGuffin must
+// be equipped in the accessory slot and Ritual Grounds must be the active
+// background (see EVOLVE_PET in gameReducer.js).
+export const MCGUFFIN_ID = 'mcguffin';
+export const RITUAL_GROUNDS_ID = 'bg_ritual_grounds';
 
 export const SHOP_ITEMS = [
   // clothes
@@ -36,6 +44,7 @@ export const SHOP_ITEMS = [
     minStage: 'adult',
     Render: CrownIcon,
   },
+  { id: MCGUFFIN_ID, category: 'clothes', slot: 'accessory', name: 'McGuffin', price: 100, Render: McGuffinIcon },
 
   // furniture
   { id: 'furniture_chair', category: 'furniture', slot: 'floorLeft', name: 'Chair', price: 80, Render: ChairIcon },
@@ -67,6 +76,13 @@ export const SHOP_ITEMS = [
     price: 200,
     minStage: 'adult',
     Render: CastleBackground,
+  },
+  {
+    id: RITUAL_GROUNDS_ID,
+    category: 'background',
+    name: 'Ritual Grounds',
+    price: 150,
+    Render: RitualGroundsBackground,
   },
 ];
 

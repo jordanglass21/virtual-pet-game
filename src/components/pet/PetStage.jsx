@@ -4,7 +4,7 @@ import FurnitureItem from '../room/FurnitureItem.jsx';
 import PetSprite from './PetSprite.jsx';
 import ActivityOverlay from '../activity/ActivityOverlay.jsx';
 
-export default function PetStage({ pet, room, activeActivity, onActivityComplete }) {
+export default function PetStage({ pet, room, activeActivity, onActivityComplete, isEvolving }) {
   const petTargetRef = useRef(null);
 
   return (
@@ -21,6 +21,7 @@ export default function PetStage({ pet, room, activeActivity, onActivityComplete
           stats={pet.stats}
           equipped={pet.equipped}
           isSleeping={Boolean(pet.sleep?.isSleeping)}
+          isEvolving={isEvolving}
         />
       </div>
       {activeActivity && (

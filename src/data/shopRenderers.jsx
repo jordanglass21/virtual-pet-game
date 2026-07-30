@@ -217,3 +217,42 @@ export function CastleBackground() {
     />
   );
 }
+
+// Evolution ritual items.
+
+export function McGuffinIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="100%" height="100%">
+      <polygon points="24,4 38,18 30,44 18,44 10,18" fill="#9b59d6" stroke="#5e2f8a" strokeWidth="2" />
+      <polygon points="24,4 32,18 16,18" fill="#c99bf0" />
+      <circle cx="24" cy="24" r="3" fill="#ffffff" opacity="0.85" />
+    </svg>
+  );
+}
+
+export function RitualGroundsBackground() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        background: 'linear-gradient(to bottom, #1a1030 0%, #1a1030 55%, #2b1b45 55%, #2b1b45 100%)',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: '18%',
+          width: '55%',
+          height: '30%',
+          transform: 'translateX(-50%)',
+          borderRadius: '50%',
+          border: '3px solid #c99bf0',
+          boxShadow: '0 0 12px 4px rgba(201, 155, 240, 0.6)',
+        }}
+      />
+    </div>
+  );
+}

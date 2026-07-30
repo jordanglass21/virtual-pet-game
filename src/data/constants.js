@@ -22,6 +22,8 @@ export const REWARD_ELIGIBLE_BELOW = 90;
 export const DAILY_CHECKIN_BONUS = 10;
 
 export const EVOLVE_THRESHOLD = 100;
+// How long the pet image flashes before revealing the adult form.
+export const EVOLVE_FLASH_DURATION_MS = 1500;
 
 export const MINIGAME_DURATION_MS = 30000;
 export const MINIGAME_PAYOUT_MULTIPLIER = 3;
