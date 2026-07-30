@@ -117,3 +117,69 @@ h1, h2, h3 {
   font-family: var(--font-display);
   margin: 0;
 }
+
+/* ---- pet display ---- */
+
+.pet-image-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.pet-image {
+  width: 180px;
+  height: 180px;
+  image-rendering: pixelated;
+}
+
+.pet-image.mood-happy {
+  animation: pet-bounce 0.6s ease-in-out infinite;
+}
+
+.pet-image.mood-sad {
+  filter: grayscale(0.6) brightness(0.9);
+}
+
+.pet-image.mood-sleepy {
+  animation: pet-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pet-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pet-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ---- species select ---- */
+
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.species-card {
+  background: var(--panel);
+  border-top: 2px solid var(--panel-light);
+  border-left: 2px solid var(--panel-light);
+  border-bottom: 2px solid var(--panel-darker);
+  border-right: 2px solid var(--panel-darker);
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.species-card.selected {
+  outline: 2px dashed var(--window-title);
+  outline-offset: -4px;
+}
+
+.species-card img {
+  width: 90px;
+  height: 90px;
+}
