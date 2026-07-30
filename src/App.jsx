@@ -7,7 +7,7 @@ import ActionBar from './components/pet/ActionBar.jsx';
 import GrowthBar from './components/pet/GrowthBar.jsx';
 import EvolutionBanner from './components/common/EvolutionBanner.jsx';
 import ShopModal from './components/shop/ShopModal.jsx';
-import MiniGameModal from './components/minigame/MiniGameModal.jsx';
+import GamesHubModal from './components/minigame/GamesHubModal.jsx';
 import { GameProvider, useGameDispatch, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
 import { getPetMood } from './utils/petMood.js';
@@ -95,7 +95,7 @@ function App() {
     <GameProvider>
       <AppShellWithState onOpenShop={() => setShopOpen(true)} onOpenMiniGame={() => setMiniGameOpen(true)} />
       {shopOpen && <ShopModal onClose={() => setShopOpen(false)} />}
-      {miniGameOpen && <MiniGameModal onClose={() => setMiniGameOpen(false)} />}
+      {miniGameOpen && <GamesHubModal onClose={() => setMiniGameOpen(false)} />}
     </GameProvider>
   );
 }

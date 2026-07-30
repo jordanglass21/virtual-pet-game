@@ -435,6 +435,40 @@ h1, h2, h3 {
   border-radius: 4px 4px 10px 10px;
 }
 
+.games-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.mole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 220px;
+  margin: 0 auto;
+}
+
+.mole-hole {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #6b4a2f;
+  border: 2px solid #3d2a1a;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mole {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: #a0784a;
+  border: 2px solid #5c3d1f;
+}
+
 /* ---- small screens ---- */
 
 @media (max-width: 380px) {
