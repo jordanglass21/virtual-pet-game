@@ -145,6 +145,11 @@ h1, h2, h3 {
   animation: pet-pulse 2.4s ease-in-out infinite;
 }
 
+.pet-image.mood-critical {
+  animation: pet-shake 0.4s ease-in-out infinite;
+  filter: saturate(1.4) brightness(0.95);
+}
+
 @keyframes pet-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -153,6 +158,20 @@ h1, h2, h3 {
 @keyframes pet-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
+}
+
+@keyframes pet-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.critical-warning {
+  color: var(--danger);
+  font-weight: bold;
+  text-align: center;
+  font-size: 13px;
+  margin: 4px 0;
 }
 
 /* ---- species select ---- */
@@ -180,8 +199,10 @@ h1, h2, h3 {
 }
 
 .species-card img {
-  width: 90px;
-  height: 90px;
+  width: 100%;
+  max-width: 90px;
+  height: auto;
+  aspect-ratio: 1;
 }
 
 /* ---- modal ---- */
@@ -360,4 +381,21 @@ h1, h2, h3 {
   background: #c98950;
   border: 2px solid #7a4d26;
   border-radius: 4px 4px 10px 10px;
+}
+
+/* ---- small screens ---- */
+
+@media (max-width: 380px) {
+  body {
+    padding: 12px 6px;
+  }
+
+  .pet-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .shop-item-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

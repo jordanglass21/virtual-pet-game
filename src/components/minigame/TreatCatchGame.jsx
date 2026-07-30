@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useGameDispatch } from '../../state/GameContext.jsx';
 import { MINIGAME_DURATION_MS, MINIGAME_PAYOUT_MULTIPLIER } from '../../data/constants.js';
 
-const GAME_WIDTH = 280;
-const GAME_HEIGHT = 260;
-const BASKET_WIDTH = 50;
-const BASKET_HEIGHT = 22;
-const ITEM_SIZE = 22;
-const BASKET_SPEED = 220; // px/sec
-const BASE_FALL_SPEED = 55; // px/sec
+// Sized to comfortably fit inside the modal on narrow (~320px) viewports.
+const GAME_WIDTH = 220;
+const GAME_HEIGHT = 200;
+const BASKET_WIDTH = 40;
+const BASKET_HEIGHT = 18;
+const ITEM_SIZE = 18;
+const BASKET_SPEED = 180; // px/sec
+const BASE_FALL_SPEED = 45; // px/sec
 const SPAWN_INTERVAL_MS = 700;
 const BAD_ITEM_CHANCE = 0.25;
 

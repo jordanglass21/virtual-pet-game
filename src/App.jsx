@@ -10,6 +10,7 @@ import ShopModal from './components/shop/ShopModal.jsx';
 import MiniGameModal from './components/minigame/MiniGameModal.jsx';
 import { GameProvider, useGameState } from './state/GameContext.jsx';
 import { useGameTick } from './hooks/useGameTick.js';
+import { getPetMood } from './utils/petMood.js';
 
 function GameScreen({ onOpenMiniGame }) {
   const state = useGameState();
@@ -19,6 +20,8 @@ function GameScreen({ onOpenMiniGame }) {
     return <SpeciesSelect />;
   }
 
+  const isCritical = getPetMood(state.pet.stats) === 'critical';
+
   return (
     <div>
       {state.pet.justEvolved && <EvolutionBanner petName={state.pet.name} />}
@@ -26,6 +29,7 @@ function GameScreen({ onOpenMiniGame }) {
       <p style={{ textAlign: 'center' }}>
         {state.pet.name} the {state.pet.stage}
       </p>
+      {isCritical && <p className="critical-warning">⚠ {state.pet.name} urgently needs your help!</p>}
       {state.pet.stage === 'baby' && <GrowthBar growth={state.pet.growth} />}
       <StatBars stats={state.pet.stats} />
       <ActionBar cooldowns={state.pet.cooldowns} />
