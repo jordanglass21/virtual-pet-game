@@ -1,0 +1,119 @@
+:root {
+  --desktop-bg: #008080;
+  --panel: #c0c0c0;
+  --panel-light: #ffffff;
+  --panel-dark: #808080;
+  --panel-darker: #404040;
+  --window-title: #000080;
+  --window-title-text: #ffffff;
+  --text: #000000;
+  --accent: #ff00ff;
+  --danger: #cc0000;
+  --good: #008000;
+
+  --font-display: 'Courier New', Courier, monospace;
+  --font-body: Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--desktop-bg);
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 4px);
+  font-family: var(--font-body);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 24px 12px;
+}
+
+#root {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ---- retro bevel panels ---- */
+
+.panel-raised {
+  background: var(--panel);
+  border-top: 2px solid var(--panel-light);
+  border-left: 2px solid var(--panel-light);
+  border-bottom: 2px solid var(--panel-darker);
+  border-right: 2px solid var(--panel-darker);
+  box-shadow: inset 1px 1px 0 var(--panel), inset -1px -1px 0 var(--panel-dark);
+}
+
+.panel-sunken {
+  background: var(--panel);
+  border-top: 2px solid var(--panel-darker);
+  border-left: 2px solid var(--panel-darker);
+  border-bottom: 2px solid var(--panel-light);
+  border-right: 2px solid var(--panel-light);
+}
+
+.retro-window {
+  background: var(--panel);
+  border-top: 2px solid var(--panel-light);
+  border-left: 2px solid var(--panel-light);
+  border-bottom: 2px solid var(--panel-darker);
+  border-right: 2px solid var(--panel-darker);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.retro-titlebar {
+  background: linear-gradient(90deg, var(--window-title), #1084d0);
+  color: var(--window-title-text);
+  font-family: var(--font-display);
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---- retro buttons ---- */
+
+.btn-retro {
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--panel);
+  border-top: 2px solid var(--panel-light);
+  border-left: 2px solid var(--panel-light);
+  border-bottom: 2px solid var(--panel-darker);
+  border-right: 2px solid var(--panel-darker);
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.btn-retro:active:not(:disabled) {
+  border-top: 2px solid var(--panel-darker);
+  border-left: 2px solid var(--panel-darker);
+  border-bottom: 2px solid var(--panel-light);
+  border-right: 2px solid var(--panel-light);
+}
+
+.btn-retro:disabled {
+  color: var(--panel-dark);
+  cursor: default;
+}
+
+/* ---- scrollbars stay system-ish; keep default ---- */
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
