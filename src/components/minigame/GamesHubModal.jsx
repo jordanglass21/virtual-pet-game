@@ -19,7 +19,7 @@ const GAMES = [
     key: 'dogfight',
     title: 'Dogfight',
     description:
-      'Pick Scatter Shot, Assault Shot, or the Bomb - the enemy gets a different one. Battle it out to 0 health!',
+      'Pick Scatter Shot, Assault Shot, or the Bomb - the enemy picks at random. Battle it out to 0 health!',
     GameComponent: DogfightGame,
   },
   {

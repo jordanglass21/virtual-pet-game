@@ -26,6 +26,11 @@ export default function MiniGameModal({ title, description, gameKey, GameCompone
       {phase === 'playing' && <GameComponent onFinish={handleFinish} />}
       {phase === 'result' && (
         <div style={{ textAlign: 'center' }}>
+          {result.outcome && (
+            <p style={{ fontWeight: 'bold', fontSize: 16 }}>
+              {result.outcome === 'win' ? 'You win!' : 'You lose!'}
+            </p>
+          )}
           <p>Score: {result.score}</p>
           <p>You earned ${result.payout}!</p>
           <button type="button" className="btn-retro" onClick={onClose}>

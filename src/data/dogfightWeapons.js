@@ -10,7 +10,7 @@ export const WEAPONS = {
     kind: 'forward',
     pelletCount: 5,
     spreadDeg: 55,
-    damage: 7,
+    damage: 10,
     range: 75,
     fireIntervalMs: 1000,
     projectileSpeed: 190,
@@ -43,7 +43,6 @@ export const WEAPONS = {
 
 export const WEAPON_LIST = Object.values(WEAPONS);
 
-export function pickAiWeaponId(playerWeaponId) {
-  const options = WEAPON_LIST.filter((w) => w.id !== playerWeaponId);
-  return options[Math.floor(Math.random() * options.length)].id;
+export function pickAiWeaponId() {
+  return WEAPON_LIST[Math.floor(Math.random() * WEAPON_LIST.length)].id;
 }

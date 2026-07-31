@@ -99,7 +99,7 @@ export default function DogfightGame({ onFinish }) {
         type: 'RECORD_MINIGAME_RESULT',
         payload: { game: 'dogfight', score, payout },
       });
-      onFinishRef.current({ score, payout });
+      onFinishRef.current({ score, payout, outcome: playerWon ? 'win' : 'lose' });
     }
 
     function fireForward(shooter, weapon, targetX, targetY, owner) {
@@ -303,7 +303,7 @@ export default function DogfightGame({ onFinish }) {
 
   function handleChooseWeapon(weaponId) {
     const game = gameRef.current;
-    const aiId = pickAiWeaponId(weaponId);
+    const aiId = pickAiWeaponId();
     game.playerWeaponId = weaponId;
     game.aiWeaponId = aiId;
     game.phase = 'battle';
@@ -315,7 +315,7 @@ export default function DogfightGame({ onFinish }) {
   if (phase === 'select') {
     return (
       <div>
-        <p style={{ textAlign: 'center', fontSize: 12 }}>Choose your weapon - the enemy will pick a different one:</p>
+        <p style={{ textAlign: 'center', fontSize: 12 }}>Choose your weapon - the enemy picks at random, so it might match yours:</p>
         <div className="dogfight-weapon-grid">
           {WEAPON_LIST.map((w) => (
             <button
