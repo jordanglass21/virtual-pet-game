@@ -13,6 +13,7 @@ const SHIP_SPEED = 110; // px/s
 const AI_SPEED = 112; // px/s - just above the player's speed
 const AI_DODGE_LOOKAHEAD_S = 0.7;
 const AI_DODGE_MARGIN = 22;
+const AI_BOMB_HOVER_GAP = 45; // how far above the player the bomb AI tries to hover
 const MAX_HEALTH = 100;
 const PROJECTILE_RADIUS = 3;
 const BOMB_RADIUS = 6;
@@ -229,8 +230,10 @@ export default function DogfightGame({ onFinish }) {
           desiredX = dodge.x;
           desiredY = dodge.y;
         } else if (aiWeapon.kind === 'bomb') {
+          // Always hover directly above wherever the player currently is,
+          // not a fixed spot near the top of the arena.
           desiredX = game.player.x;
-          desiredY = SHIP_RADIUS + 4;
+          desiredY = clamp(game.player.y - AI_BOMB_HOVER_GAP, SHIP_RADIUS, ARENA_HEIGHT - SHIP_RADIUS);
         } else {
           const ddx = game.ai.x - game.player.x;
           const ddy = game.ai.y - game.player.y;
