@@ -2,8 +2,8 @@ import blobBaby from '../assets/pets/blob/baby.svg';
 import blobAdult from '../assets/pets/blob/adult.svg';
 import catBaby from '../assets/pets/cat/baby.svg';
 import catAdult from '../assets/pets/cat/adult.svg';
-import dragonBaby from '../assets/pets/dragon/baby.svg';
-import dragonAdult from '../assets/pets/dragon/adult.svg';
+import dragonBaby from '../assets/pets/dragon/baby.jpg';
+import dragonAdult from '../assets/pets/dragon/adult.jpg';
 
 // Pet body art is a placeholder shipped with the project - replace the files
 // under src/assets/pets/<speciesId>/{baby,adult}.(svg|png) with real artwork

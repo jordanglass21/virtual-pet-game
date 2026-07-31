@@ -136,7 +136,7 @@ h1, h2, h3 {
 .pet-image {
   width: 180px;
   height: 180px;
-  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 .pet-image.mood-happy {
