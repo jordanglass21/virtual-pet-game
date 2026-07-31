@@ -165,6 +165,10 @@ export function gameReducer(state, action) {
       return { ...state, lastDeath: null };
     }
 
+    case 'SET_CURRENCY': {
+      return { ...state, currency: Math.max(0, Math.round(action.payload.amount)) };
+    }
+
     case 'SET_CLOTHING_POSITION': {
       const { itemId, x, y } = action.payload;
       return { ...state, clothingPositions: { ...state.clothingPositions, [itemId]: { x, y } } };

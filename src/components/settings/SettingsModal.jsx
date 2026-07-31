@@ -7,10 +7,17 @@ export default function SettingsModal({ onClose }) {
   const state = useGameState();
   const dispatch = useGameDispatch();
   const [confirming, setConfirming] = useState(false);
+  const [currencyInput, setCurrencyInput] = useState(String(state.currency));
 
   function handleReset() {
     dispatch({ type: 'RESET_GAME' });
     onClose();
+  }
+
+  function handleSetCurrency() {
+    const amount = Number(currencyInput);
+    if (!Number.isFinite(amount)) return;
+    dispatch({ type: 'SET_CURRENCY', payload: { amount } });
   }
 
   const memoriam = [...state.memoriam].reverse();
@@ -41,6 +48,20 @@ export default function SettingsModal({ onClose }) {
           </div>
         </div>
       )}
+
+      <h3 style={{ fontSize: 13, margin: '14px 0 6px' }}>Testing</h3>
+      <div className="panel-sunken" style={{ padding: 10, display: 'flex', gap: 6, alignItems: 'center' }}>
+        <span style={{ fontSize: 12 }}>Set currency:</span>
+        <input
+          type="number"
+          value={currencyInput}
+          onChange={(e) => setCurrencyInput(e.target.value)}
+          style={{ fontFamily: 'var(--font-body)', padding: 4, width: 90 }}
+        />
+        <button type="button" className="btn-retro" onClick={handleSetCurrency}>
+          Set
+        </button>
+      </div>
 
       <h3 style={{ fontSize: 13, margin: '14px 0 6px' }}>In Memoriam</h3>
       {memoriam.length === 0 ? (
