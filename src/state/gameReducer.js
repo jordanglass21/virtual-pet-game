@@ -290,7 +290,8 @@ export function gameReducer(state, action) {
 
     case 'RECORD_MINIGAME_RESULT': {
       const { game, score, payout } = action.payload;
-      const prevHighScore = state.miniGames[game]?.highScore ?? 0;
+      const prev = state.miniGames[game] ?? { highScore: 0, highScoreName: null };
+      const isNewRecord = score > prev.highScore;
 
       let pet = state.pet;
       if (pet) {
@@ -311,13 +312,18 @@ export function gameReducer(state, action) {
         currency: state.currency + payout,
         miniGames: {
           ...state.miniGames,
-          [game]: { highScore: Math.max(prevHighScore, score) },
+          [game]: {
+            highScore: isNewRecord ? score : prev.highScore,
+            highScoreName: isNewRecord ? (pet?.name ?? prev.highScoreName) : prev.highScoreName,
+          },
         },
       };
     }
 
     case 'RECORD_DOGFIGHT_RESULT': {
       const { payout, winStreak, maxWinStreak } = action.payload;
+      const prev = state.miniGames.dogfight ?? { winStreak: 0, maxWinStreak: 0, maxWinStreakName: null };
+      const isNewRecord = maxWinStreak > prev.maxWinStreak;
 
       let pet = state.pet;
       if (pet) {
@@ -338,7 +344,11 @@ export function gameReducer(state, action) {
         currency: state.currency + payout,
         miniGames: {
           ...state.miniGames,
-          dogfight: { winStreak, maxWinStreak },
+          dogfight: {
+            winStreak,
+            maxWinStreak,
+            maxWinStreakName: isNewRecord ? (pet?.name ?? prev.maxWinStreakName) : prev.maxWinStreakName,
+          },
         },
       };
     }
@@ -346,16 +356,25 @@ export function gameReducer(state, action) {
     case 'SLOT_SPIN': {
       const { bet, payout } = action.payload;
       if (bet > state.currency) return state;
-      const prevBiggestWin = state.miniGames.slotMachine?.highScore ?? 0;
+      const prev = state.miniGames.slotMachine ?? { highScore: 0, highScoreName: null };
+      const isNewRecord = payout > prev.highScore;
       return {
         ...state,
         currency: state.currency - bet + payout,
         pet: state.pet ? { ...state.pet, totalEarned: state.pet.totalEarned + payout } : state.pet,
         miniGames: {
           ...state.miniGames,
-          slotMachine: { highScore: Math.max(prevBiggestWin, payout) },
+          slotMachine: {
+            highScore: isNewRecord ? payout : prev.highScore,
+            highScoreName: isNewRecord ? (state.pet?.name ?? prev.highScoreName) : prev.highScoreName,
+          },
         },
       };
+    }
+
+    case 'DEBUG_MAX_GROWTH': {
+      if (!state.pet) return state;
+      return { ...state, pet: { ...state.pet, growth: EVOLVE_THRESHOLD } };
     }
 
     default:
