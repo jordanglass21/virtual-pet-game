@@ -48,7 +48,7 @@ export default function DogfightGame({ onFinish }) {
   const [ai, setAi] = useState(gameRef.current.ai);
   const [projectiles, setProjectiles] = useState([]);
 
-  const keysRef = useRef({ up: false, down: false, left: false, right: false });
+  const keysRef = useRef({ up: false, down: false, left: false, right: false, fire: false });
   const dispatchRef = useRef(dispatch);
   dispatchRef.current = dispatch;
   const onFinishRef = useRef(onFinish);
@@ -61,12 +61,16 @@ export default function DogfightGame({ onFinish }) {
       if (dir) {
         e.preventDefault();
         keysRef.current[dir] = true;
+      } else if (e.code === 'Space') {
+        e.preventDefault();
+        keysRef.current.fire = true;
       }
     }
     function handleKeyUp(e) {
       const map = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
       const dir = map[e.key];
       if (dir) keysRef.current[dir] = false;
+      else if (e.code === 'Space') keysRef.current.fire = false;
     }
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
@@ -190,8 +194,8 @@ export default function DogfightGame({ onFinish }) {
           );
         }
 
-        // Firing
-        if (now >= game.playerFireNextAt) {
+        // Firing - the player must hold Space; the AI fires on its own.
+        if (keysRef.current.fire && now >= game.playerFireNextAt) {
           game.playerFireNextAt = now + playerWeapon.fireIntervalMs;
           const newShots =
             playerWeapon.kind === 'bomb'
@@ -326,7 +330,7 @@ export default function DogfightGame({ onFinish }) {
         />
       </div>
       <p style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
-        Arrows to fly - your {WEAPONS[playerWeaponId].name} auto-fires. Enemy has {WEAPONS[aiWeaponId].name}.
+        Arrows to fly, Space to fire your {WEAPONS[playerWeaponId].name}. Enemy has {WEAPONS[aiWeaponId].name}.
       </p>
     </div>
   );
