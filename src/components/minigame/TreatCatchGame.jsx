@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameDispatch } from '../../state/GameContext.jsx';
-import { MINIGAME_DURATION_MS, MINIGAME_PAYOUT_MULTIPLIER } from '../../data/constants.js';
+import { MINIGAME_PAYOUT_MULTIPLIER } from '../../data/constants.js';
 
 // Sized to comfortably fit inside the modal on narrow (~320px) viewports.
 const GAME_WIDTH = 220;
@@ -12,11 +12,11 @@ const BASKET_SPEED = 180; // px/sec
 const BASE_FALL_SPEED = 45; // px/sec
 const SPAWN_INTERVAL_MS = 700;
 const BAD_ITEM_CHANCE = 0.25;
-// After MINIGAME_DURATION_MS, red treats start appearing and the round
-// switches from a timer to sudden death: miss any treat (of any type) and
-// the round ends immediately.
 const RED_ITEM_CHANCE = 0.25;
 const RED_TREAT_SCORE_VALUE = 5;
+// Fall speed ramps up continuously over the run - no fixed round length,
+// this just controls how quickly it gets harder.
+const SPEED_RAMP_PERIOD_MS = 30000;
 
 let nextItemId = 0;
 
@@ -25,8 +25,6 @@ export default function TreatCatchGame({ onFinish }) {
   const [basketX, setBasketX] = useState(GAME_WIDTH / 2 - BASKET_WIDTH / 2);
   const [items, setItems] = useState([]);
   const [score, setScore] = useState(0);
-  const [timeLeftMs, setTimeLeftMs] = useState(MINIGAME_DURATION_MS);
-  const [phase, setPhase] = useState('timed'); // timed | bonus
 
   const keysRef = useRef({ left: false, right: false });
   const basketXRef = useRef(basketX);
@@ -34,7 +32,6 @@ export default function TreatCatchGame({ onFinish }) {
   const scoreRef = useRef(score);
   const lastSpawnRef = useRef(0);
   const elapsedRef = useRef(0);
-  const bonusStartedRef = useRef(false);
   const onFinishRef = useRef(onFinish);
   const dispatchRef = useRef(dispatch);
   onFinishRef.current = onFinish;
@@ -81,15 +78,6 @@ export default function TreatCatchGame({ onFinish }) {
       lastTime = now;
       elapsedRef.current += dt * 1000;
 
-      const inBonusPhase = elapsedRef.current >= MINIGAME_DURATION_MS;
-      if (inBonusPhase && !bonusStartedRef.current) {
-        bonusStartedRef.current = true;
-        setPhase('bonus');
-      }
-      if (!inBonusPhase) {
-        setTimeLeftMs(Math.max(0, MINIGAME_DURATION_MS - elapsedRef.current));
-      }
-
       let nextX = basketXRef.current;
       if (keysRef.current.left) nextX -= BASKET_SPEED * dt;
       if (keysRef.current.right) nextX += BASKET_SPEED * dt;
@@ -97,17 +85,13 @@ export default function TreatCatchGame({ onFinish }) {
       basketXRef.current = nextX;
       setBasketX(nextX);
 
-      const speedMultiplier = 1 + elapsedRef.current / MINIGAME_DURATION_MS;
+      const speedMultiplier = 1 + elapsedRef.current / SPEED_RAMP_PERIOD_MS;
       if (now - lastSpawnRef.current > SPAWN_INTERVAL_MS) {
         lastSpawnRef.current = now;
         const roll = Math.random();
         let type = 'good';
-        if (inBonusPhase) {
-          if (roll < BAD_ITEM_CHANCE) type = 'bad';
-          else if (roll < BAD_ITEM_CHANCE + RED_ITEM_CHANCE) type = 'red';
-        } else if (roll < BAD_ITEM_CHANCE) {
-          type = 'bad';
-        }
+        if (roll < BAD_ITEM_CHANCE) type = 'bad';
+        else if (roll < BAD_ITEM_CHANCE + RED_ITEM_CHANCE) type = 'red';
         itemsRef.current = [
           ...itemsRef.current,
           {
@@ -135,7 +119,7 @@ export default function TreatCatchGame({ onFinish }) {
           continue;
         }
         if (newY > GAME_HEIGHT) {
-          if (inBonusPhase) {
+          if (item.type !== 'bad') {
             scoreRef.current += scoreDelta;
             setScore(scoreRef.current);
             endRound();
@@ -164,9 +148,8 @@ export default function TreatCatchGame({ onFinish }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+      <div style={{ textAlign: 'center', fontSize: 12, marginBottom: 4 }}>
         <span>Score: {score}</span>
-        <span>{phase === 'bonus' ? '🔥 Bonus Round!' : `Time: ${Math.ceil(timeLeftMs / 1000)}s`}</span>
       </div>
       <div className="treat-game-area" style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}>
         {items.map((item) => (
@@ -182,9 +165,7 @@ export default function TreatCatchGame({ onFinish }) {
         />
       </div>
       <p style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
-        {phase === 'bonus'
-          ? 'Red treats are worth big points - but miss ANY treat and it\'s game over!'
-          : 'Use ← → to move. Catch treats, avoid rotten food! Red treats appear after 30s.'}
+        Use ← → to move. Don't let a good or red treat hit the ground - rotten (brown) treats are safe to miss!
       </p>
     </div>
   );

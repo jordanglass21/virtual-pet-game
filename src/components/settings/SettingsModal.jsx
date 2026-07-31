@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from '../common/Modal.jsx';
 import { useGameDispatch, useGameState } from '../../state/GameContext.jsx';
+import { SPECIES } from '../../data/species.js';
 
 export default function SettingsModal({ onClose }) {
   const state = useGameState();
@@ -11,6 +12,8 @@ export default function SettingsModal({ onClose }) {
     dispatch({ type: 'RESET_GAME' });
     onClose();
   }
+
+  const memoriam = [...state.memoriam].reverse();
 
   return (
     <Modal title="Settings" onClose={onClose}>
@@ -36,6 +39,22 @@ export default function SettingsModal({ onClose }) {
               Cancel
             </button>
           </div>
+        </div>
+      )}
+
+      <h3 style={{ fontSize: 13, margin: '14px 0 6px' }}>In Memoriam</h3>
+      {memoriam.length === 0 ? (
+        <p style={{ fontSize: 12 }}>No pets have passed on yet.</p>
+      ) : (
+        <div className="panel-sunken memoriam-list">
+          {memoriam.map((entry, i) => (
+            <div key={i} className="memoriam-entry">
+              <span>
+                {entry.name} the {SPECIES[entry.speciesId]?.name ?? entry.speciesId}
+              </span>
+              <span>Score: {entry.score}</span>
+            </div>
+          ))}
         </div>
       )}
     </Modal>

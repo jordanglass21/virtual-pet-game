@@ -1,6 +1,7 @@
 import { SPECIES } from '../data/species.js';
 import { SHOP_ITEMS_BY_ID, MCGUFFIN_ID, RITUAL_GROUNDS_ID } from '../data/shopItems.js';
 import { createInitialState } from './initialState.js';
+import { computePetScore } from '../utils/score.js';
 import {
   CARE_ACTIONS,
   ACTION_COOLDOWN_MS,
@@ -20,6 +21,9 @@ import {
   MINIGAME_GROWTH_BONUS,
 } from '../data/constants.js';
 import { clamp, isSameCalendarDay } from '../utils/time.js';
+
+// A pet dies once at least 2 of its 4 stats bottom out at zero.
+const DEATH_ZERO_STAT_COUNT = 2;
 
 function applyDecay(pet, atTime) {
   const species = SPECIES[pet.speciesId];
@@ -66,6 +70,20 @@ function applySleepTransition(pet, atTime) {
   return pet;
 }
 
+function isDead(pet) {
+  const zeroCount = Object.values(pet.stats).filter((v) => v <= STAT_MIN).length;
+  return zeroCount >= DEATH_ZERO_STAT_COUNT;
+}
+
+function buildMemoriamEntry(pet, now) {
+  return { name: pet.name, speciesId: pet.speciesId, score: computePetScore(pet, now) };
+}
+
+function resetWithMemoriam(state, entry) {
+  const fresh = createInitialState();
+  return { ...fresh, memoriam: [...state.memoriam, entry] };
+}
+
 export function gameReducer(state, action) {
   switch (action.type) {
     case 'HYDRATE': {
@@ -73,7 +91,9 @@ export function gameReducer(state, action) {
     }
 
     case 'RESET_GAME': {
-      return createInitialState();
+      if (!state.pet) return createInitialState();
+      const entry = buildMemoriamEntry(state.pet, Date.now());
+      return resetWithMemoriam(state, entry);
     }
 
     case 'SELECT_SPECIES': {
@@ -88,6 +108,7 @@ export function gameReducer(state, action) {
           createdAt: at,
           stage: 'baby',
           growth: 0,
+          totalEarned: 0,
           justEvolved: false,
           justWokeRested: false,
           stats: { hunger: 80, happiness: 80, energy: 80, cleanliness: 80 },
@@ -103,12 +124,22 @@ export function gameReducer(state, action) {
       if (!state.pet) return state;
       let pet = applyDecay(state.pet, action.payload.now);
       pet = applySleepTransition(pet, action.payload.now);
+
+      if (isDead(pet)) {
+        const entry = buildMemoriamEntry(pet, action.payload.now);
+        return { ...resetWithMemoriam(state, entry), lastDeath: entry };
+      }
+
       return { ...state, pet };
     }
 
     case 'CLEAR_EVOLUTION_FLAG': {
       if (!state.pet) return state;
       return { ...state, pet: { ...state.pet, justEvolved: false } };
+    }
+
+    case 'CLEAR_LAST_DEATH': {
+      return { ...state, lastDeath: null };
     }
 
     case 'EVOLVE_PET': {
@@ -144,18 +175,20 @@ export function gameReducer(state, action) {
       const statBefore = pet.stats[config.stat];
       const statAfter = clamp(statBefore + config.amount, STAT_MIN, STAT_MAX);
       const earnedReward = statBefore < REWARD_ELIGIBLE_BELOW;
+      const reward = earnedReward ? config.reward : 0;
 
       pet = {
         ...pet,
         stats: { ...pet.stats, [config.stat]: statAfter },
         growth: pet.growth + config.growth,
+        totalEarned: pet.totalEarned + reward,
         cooldowns: { ...pet.cooldowns, [actionId]: at + ACTION_COOLDOWN_MS },
       };
 
       return {
         ...state,
         pet,
-        currency: state.currency + (earnedReward ? config.reward : 0),
+        currency: state.currency + reward,
       };
     }
 
@@ -167,6 +200,7 @@ export function gameReducer(state, action) {
       return {
         ...state,
         currency: state.currency + DAILY_CHECKIN_BONUS,
+        pet: state.pet ? { ...state.pet, totalEarned: state.pet.totalEarned + DAILY_CHECKIN_BONUS } : state.pet,
         lastCheckInDate: at,
       };
     }
@@ -218,6 +252,7 @@ export function gameReducer(state, action) {
             happiness: clamp(pet.stats.happiness + MINIGAME_HAPPINESS_BONUS, STAT_MIN, STAT_MAX),
           },
           growth: pet.growth + MINIGAME_GROWTH_BONUS,
+          totalEarned: pet.totalEarned + payout,
         };
       }
 
@@ -239,6 +274,7 @@ export function gameReducer(state, action) {
       return {
         ...state,
         currency: state.currency - bet + payout,
+        pet: state.pet ? { ...state.pet, totalEarned: state.pet.totalEarned + payout } : state.pet,
         miniGames: {
           ...state.miniGames,
           slotMachine: { highScore: Math.max(prevBiggestWin, payout) },

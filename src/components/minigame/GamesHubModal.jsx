@@ -12,7 +12,7 @@ const GAMES = [
     key: 'treatCatch',
     title: 'Treat Catch',
     description:
-      'Catch falling treats with your basket for 30 seconds, then survive the bonus round - miss a single treat and it\'s over!',
+      'Catch falling treats with your basket - miss a good or red one and it\'s over! Rotten treats are safe to miss.',
     GameComponent: TreatCatchGame,
   },
   {

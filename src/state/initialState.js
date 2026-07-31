@@ -18,5 +18,7 @@ export function createInitialState() {
     },
     lastCheckInDate: null,
     onboardingComplete: false,
+    memoriam: [], // { name, speciesId, score } for every past pet, survives resets
+    lastDeath: null, // set when the current pet just died, to show a Game Over modal
   };
 }
