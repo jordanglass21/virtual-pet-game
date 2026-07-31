@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { CARE_ACTIONS } from '../../data/constants.js';
+import { CARE_ACTIONS, STAT_MAX } from '../../data/constants.js';
 
 const LABELS = { feed: 'Feed', clean: 'Clean' };
 
-export default function ActionBar({ cooldowns, isSleeping, activeActivity, onStartActivity, onWake }) {
+export default function ActionBar({ cooldowns, isSleeping, energy, activeActivity, onStartActivity, onSleep, onWake }) {
   const [nowTick, setNowTick] = useState(Date.now());
 
   useEffect(() => {
@@ -15,6 +15,16 @@ export default function ActionBar({ cooldowns, isSleeping, activeActivity, onSta
     <div>
       {isSleeping && <p className="sleeping-indicator">💤 Napping... click any action to wake early.</p>}
       <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap', marginTop: 10 }}>
+        {!isSleeping && (
+          <button
+            type="button"
+            className="btn-retro"
+            disabled={energy >= STAT_MAX || Boolean(activeActivity)}
+            onClick={onSleep}
+          >
+            Sleep
+          </button>
+        )}
         {Object.keys(CARE_ACTIONS).map((actionId) => {
           const readyAt = cooldowns[actionId] ?? 0;
           const remainingMs = Math.max(0, readyAt - nowTick);

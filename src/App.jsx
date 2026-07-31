@@ -63,6 +63,10 @@ function GameScreen({ onOpenMiniGame }) {
     dispatch({ type: 'WAKE_PET' });
   }
 
+  function handleSleep() {
+    dispatch({ type: 'START_SLEEP', payload: { now: Date.now() } });
+  }
+
   function handleEvolveClick() {
     if (!hasMcGuffin || !hasRitualGrounds) {
       setShowEvolveRequirements(true);
@@ -95,7 +99,11 @@ function GameScreen({ onOpenMiniGame }) {
       />
       <p style={{ textAlign: 'center' }}>{pet.name}</p>
       <p style={{ textAlign: 'center', fontSize: 11 }}>Score: {computePetScore(pet, Date.now())}</p>
-      {pet.justWokeRested && <p className="sleep-bonus-indicator">✨ {pet.name} had a great nap! +happiness</p>}
+      {pet.justWokeRested && (
+        <p className="sleep-bonus-indicator">
+          ✨ {pet.name} woke up feeling refreshed! +{pet.lastNapBonus?.happiness ?? 0} happiness
+        </p>
+      )}
       {mood === 'critical' && <p className="critical-warning">⚠ {pet.name} urgently needs your help!</p>}
       {pet.stage === 'baby' && <GrowthBar growth={pet.growth} />}
       {readyToEvolve && (
@@ -114,8 +122,10 @@ function GameScreen({ onOpenMiniGame }) {
       <ActionBar
         cooldowns={pet.cooldowns}
         isSleeping={isSleeping}
+        energy={pet.stats.energy}
         activeActivity={activeActivity}
         onStartActivity={handleStartActivity}
+        onSleep={handleSleep}
         onWake={handleWake}
       />
       <div style={{ textAlign: 'center', marginTop: 10 }}>

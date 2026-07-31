@@ -14,8 +14,8 @@ import {
   SLEEP_DURATION_MS,
   ENERGY_REGEN_PER_MIN,
   SLEEP_DECAY_MULTIPLIER,
-  SLEEP_BONUS_HAPPINESS,
-  SLEEP_BONUS_GROWTH,
+  SLEEP_BONUS_HAPPINESS_MAX,
+  SLEEP_BONUS_GROWTH_MAX,
   ADULT_DECAY_MULTIPLIER,
   MINIGAME_HAPPINESS_BONUS,
   MINIGAME_GROWTH_BONUS,
@@ -49,12 +49,32 @@ function applyDecay(pet, atTime) {
   return { ...pet, stats, lastUpdatedAt: atTime };
 }
 
+// Waking grants a happiness/growth bonus scaled by how much energy was
+// actually recovered during the nap, so a short or interrupted nap still
+// helps a little instead of forfeiting the bonus entirely.
+function wakePet(pet) {
+  const energyAtStart = pet.sleep?.energyAtStart ?? pet.stats.energy;
+  const possibleGain = STAT_MAX - energyAtStart;
+  const fraction = possibleGain > 0 ? clamp((pet.stats.energy - energyAtStart) / possibleGain, 0, 1) : 1;
+  const happinessBonus = Math.round(SLEEP_BONUS_HAPPINESS_MAX * fraction);
+  const growthBonus = Math.round(SLEEP_BONUS_GROWTH_MAX * fraction);
+
+  return {
+    ...pet,
+    sleep: { isSleeping: false, startedAt: null, energyAtStart: null },
+    stats: { ...pet.stats, happiness: clamp(pet.stats.happiness + happinessBonus, STAT_MIN, STAT_MAX) },
+    growth: pet.growth + growthBonus,
+    justWokeRested: happinessBonus > 0,
+    lastNapBonus: { happiness: happinessBonus, growth: growthBonus },
+  };
+}
+
 function applySleepTransition(pet, atTime) {
-  const sleep = pet.sleep ?? { isSleeping: false, startedAt: null };
+  const sleep = pet.sleep ?? { isSleeping: false, startedAt: null, energyAtStart: null };
 
   if (!sleep.isSleeping) {
     if (pet.stats.energy < SLEEP_TRIGGER_THRESHOLD) {
-      return { ...pet, sleep: { isSleeping: true, startedAt: atTime } };
+      return { ...pet, sleep: { isSleeping: true, startedAt: atTime, energyAtStart: pet.stats.energy } };
     }
     return pet;
   }
@@ -62,13 +82,7 @@ function applySleepTransition(pet, atTime) {
   const napElapsed = atTime - sleep.startedAt;
   const restedEnough = pet.stats.energy >= STAT_MAX;
   if (napElapsed >= SLEEP_DURATION_MS || restedEnough) {
-    return {
-      ...pet,
-      sleep: { isSleeping: false, startedAt: null },
-      stats: { ...pet.stats, happiness: clamp(pet.stats.happiness + SLEEP_BONUS_HAPPINESS, STAT_MIN, STAT_MAX) },
-      growth: pet.growth + SLEEP_BONUS_GROWTH,
-      justWokeRested: true,
-    };
+    return wakePet(pet);
   }
   return pet;
 }
@@ -119,7 +133,7 @@ export function gameReducer(state, action) {
           lastUpdatedAt: at,
           equipped: { hat: null, outfit: null, accessory: null },
           cooldowns: {},
-          sleep: { isSleeping: false, startedAt: null },
+          sleep: { isSleeping: false, startedAt: null, energyAtStart: null },
         },
       };
     }
@@ -162,7 +176,19 @@ export function gameReducer(state, action) {
 
     case 'WAKE_PET': {
       if (!state.pet?.sleep?.isSleeping) return state;
-      return { ...state, pet: { ...state.pet, sleep: { isSleeping: false, startedAt: null } } };
+      return { ...state, pet: wakePet(state.pet) };
+    }
+
+    case 'START_SLEEP': {
+      if (!state.pet || state.pet.sleep?.isSleeping) return state;
+      if (state.pet.stats.energy >= STAT_MAX) return state;
+      return {
+        ...state,
+        pet: {
+          ...state.pet,
+          sleep: { isSleeping: true, startedAt: action.payload.now, energyAtStart: state.pet.stats.energy },
+        },
+      };
     }
 
     case 'CARE_ACTION': {

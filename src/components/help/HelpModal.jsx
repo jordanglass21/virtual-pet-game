@@ -16,8 +16,9 @@ export default function HelpModal({ onClose }) {
             <strong>Clean</strong> - scrub the dirty spots with the brush.
           </li>
           <li>
-            <strong>Sleep</strong> - happens automatically when energy gets low. Leave your pet undisturbed while
-            it naps for a bonus!
+            <strong>Sleep</strong> - click Sleep any time energy isn't full, or it'll nap automatically once
+            energy gets low. The happiness/growth bonus on waking scales with how rested it gets, so waking it
+            early still helps a little.
           </li>
           <li>
             <strong>Play</strong> - open Games to play Treat Catch, Dogfight, or Pet Run, which also makes your pet

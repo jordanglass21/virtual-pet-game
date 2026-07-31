@@ -31,15 +31,19 @@ export const MINIGAME_PAYOUT_MULTIPLIER = 3;
 export const MINIGAME_HAPPINESS_BONUS = 20;
 export const MINIGAME_GROWTH_BONUS = 5;
 
-// Sleep is automatic, not a manual action: the pet naps once energy drops
-// below the trigger, regenerating energy (and decaying other stats more
-// slowly) until the nap duration elapses or energy is full again.
+// The pet can be put to sleep manually any time energy isn't full, or it
+// will nap automatically once energy drops below the trigger (neglect
+// safety net). Either way it regenerates energy (and decays other stats
+// more slowly) until the nap duration elapses or energy is full again.
+// The happiness/growth bonus on waking scales with how much energy was
+// actually recovered, so a short or interrupted nap still helps a little
+// instead of forfeiting the bonus entirely.
 export const SLEEP_TRIGGER_THRESHOLD = 25;
-export const SLEEP_DURATION_MS = 45000;
-export const ENERGY_REGEN_PER_MIN = 12;
+export const SLEEP_DURATION_MS = 60000;
+export const ENERGY_REGEN_PER_MIN = 80;
 export const SLEEP_DECAY_MULTIPLIER = 0.4;
-export const SLEEP_BONUS_HAPPINESS = 15;
-export const SLEEP_BONUS_GROWTH = 5;
+export const SLEEP_BONUS_HAPPINESS_MAX = 15;
+export const SLEEP_BONUS_GROWTH_MAX = 5;
 
 // Adults are lower-maintenance: stats decay slower once a pet is grown.
 export const ADULT_DECAY_MULTIPLIER = 0.7;
