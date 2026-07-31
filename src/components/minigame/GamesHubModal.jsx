@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Modal from '../common/Modal.jsx';
 import MiniGameModal from './MiniGameModal.jsx';
 import TreatCatchGame from './TreatCatchGame.jsx';
-import WhackAMoleGame from './WhackAMoleGame.jsx';
+import DogfightGame from './DogfightGame.jsx';
 import PetRunGame from './PetRunGame.jsx';
 import SlotMachineModal from './SlotMachineModal.jsx';
 import { useGameState } from '../../state/GameContext.jsx';
@@ -16,10 +16,11 @@ const GAMES = [
     GameComponent: TreatCatchGame,
   },
   {
-    key: 'whackAMole',
-    title: 'Whack-a-Mole',
-    description: 'Click the moles as they pop up before time runs out!',
-    GameComponent: WhackAMoleGame,
+    key: 'dogfight',
+    title: 'Dogfight',
+    description:
+      'Pick Scatter Shot, Assault Shot, or the Bomb - the enemy gets a different one. Battle it out to 0 health!',
+    GameComponent: DogfightGame,
   },
   {
     key: 'petRun',

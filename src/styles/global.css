@@ -629,6 +629,95 @@ h1, h2, h3 {
   border-bottom: none;
 }
 
+/* ---- dogfight ---- */
+
+.dogfight-weapon-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dogfight-weapon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  padding: 8px;
+}
+
+.dogfight-health-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.dogfight-health-bar-outer {
+  display: flex;
+  flex: 1;
+  height: 10px;
+  background: #222;
+  border: 1px solid #000;
+}
+
+.dogfight-health-bar-inner {
+  height: 100%;
+}
+
+.dogfight-health-player {
+  background: #4fa8e0;
+}
+
+.dogfight-health-ai {
+  background: #e63946;
+  margin-left: auto;
+}
+
+.dogfight-arena {
+  position: relative;
+  margin: 0 auto;
+  background: #16213a;
+  border-top: 2px solid var(--panel-darker);
+  border-left: 2px solid var(--panel-darker);
+  border-bottom: 2px solid var(--panel-light);
+  border-right: 2px solid var(--panel-light);
+  overflow: hidden;
+}
+
+.dogfight-ship {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.dogfight-ship-player {
+  background: #4fa8e0;
+  border: 2px solid #1e5f8c;
+}
+
+.dogfight-ship-ai {
+  background: #e63946;
+  border: 2px solid #8a1c24;
+}
+
+.dogfight-projectile {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.dogfight-shot-player {
+  background: #ffd400;
+}
+
+.dogfight-shot-ai {
+  background: #ff8c42;
+}
+
+.dogfight-bomb {
+  background: #6b4a2f;
+  border: 1px solid #3d2a1a;
+}
+
 /* ---- small screens ---- */
 
 @media (max-width: 380px) {

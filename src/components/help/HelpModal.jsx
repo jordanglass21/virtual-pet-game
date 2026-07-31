@@ -20,8 +20,8 @@ export default function HelpModal({ onClose }) {
             it naps for a bonus!
           </li>
           <li>
-            <strong>Play</strong> - open Games to play Treat Catch, Whack-a-Mole, or Pet Run, which also makes your
-            pet happy.
+            <strong>Play</strong> - open Games to play Treat Catch, Dogfight, or Pet Run, which also makes your pet
+            happy.
           </li>
         </ul>
         <p>
