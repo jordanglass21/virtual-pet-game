@@ -160,6 +160,11 @@ export function gameReducer(state, action) {
       return { ...state, lastDeath: null };
     }
 
+    case 'SET_CLOTHING_POSITION': {
+      const { itemId, x, y } = action.payload;
+      return { ...state, clothingPositions: { ...state.clothingPositions, [itemId]: { x, y } } };
+    }
+
     case 'EVOLVE_PET': {
       const pet = state.pet;
       if (!pet || pet.stage !== 'baby') return state;

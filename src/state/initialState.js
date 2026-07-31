@@ -18,6 +18,9 @@ export function createInitialState() {
     },
     lastCheckInDate: null,
     onboardingComplete: false,
+    // { [itemId]: { x, y } } drag offset from an item's default badge spot -
+    // keyed by item, not by pet, so it's remembered wherever that item is worn.
+    clothingPositions: {},
     memoriam: [], // { name, speciesId, score } for every past pet, survives resets
     lastDeath: null, // set when the current pet just died, to show a Game Over modal
   };

@@ -340,20 +340,28 @@ h1, h2, h3 {
 .clothing-badge {
   position: absolute;
   aspect-ratio: 1;
+  cursor: grab;
+  touch-action: none;
 }
 
+.clothing-badge:active {
+  cursor: grabbing;
+}
+
+/* Left offsets below are pre-centered (50% - width/2) instead of using
+   left:50%+transform:translateX(-50%), because react-draggable applies its
+   own inline transform for dragging, which would otherwise wipe out a
+   centering transform set via CSS. */
 .clothing-badge-hat {
   top: -6%;
-  left: 50%;
+  left: 30%;
   width: 40%;
-  transform: translateX(-50%);
 }
 
 .clothing-badge-outfit {
   top: 58%;
-  left: 50%;
+  left: 33%;
   width: 34%;
-  transform: translateX(-50%);
 }
 
 .clothing-badge-accessory {
