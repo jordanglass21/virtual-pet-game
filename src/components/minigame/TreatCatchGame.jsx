@@ -14,6 +14,9 @@ const SPAWN_INTERVAL_MS = 700;
 const BAD_ITEM_CHANCE = 0.25;
 const RED_ITEM_CHANCE = 0.25;
 const RED_TREAT_SCORE_VALUE = 5;
+const BAD_TREAT_SCORE_VALUE = -5;
+// Red treats don't start dropping until this long into the run.
+const RED_TREAT_DELAY_MS = 30000;
 // Fall speed ramps up continuously over the run - no fixed round length,
 // this just controls how quickly it gets harder.
 const SPEED_RAMP_PERIOD_MS = 30000;
@@ -88,10 +91,11 @@ export default function TreatCatchGame({ onFinish }) {
       const speedMultiplier = 1 + elapsedRef.current / SPEED_RAMP_PERIOD_MS;
       if (now - lastSpawnRef.current > SPAWN_INTERVAL_MS) {
         lastSpawnRef.current = now;
+        const redEligible = elapsedRef.current >= RED_TREAT_DELAY_MS;
         const roll = Math.random();
         let type = 'good';
         if (roll < BAD_ITEM_CHANCE) type = 'bad';
-        else if (roll < BAD_ITEM_CHANCE + RED_ITEM_CHANCE) type = 'red';
+        else if (redEligible && roll < BAD_ITEM_CHANCE + RED_ITEM_CHANCE) type = 'red';
         itemsRef.current = [
           ...itemsRef.current,
           {
@@ -115,7 +119,7 @@ export default function TreatCatchGame({ onFinish }) {
           item.x < basketXRef.current + BASKET_WIDTH;
 
         if (caught) {
-          scoreDelta += item.type === 'good' ? 1 : item.type === 'red' ? RED_TREAT_SCORE_VALUE : -1;
+          scoreDelta += item.type === 'good' ? 1 : item.type === 'red' ? RED_TREAT_SCORE_VALUE : BAD_TREAT_SCORE_VALUE;
           continue;
         }
         if (newY > GAME_HEIGHT) {
@@ -165,7 +169,8 @@ export default function TreatCatchGame({ onFinish }) {
         />
       </div>
       <p style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
-        Use ← → to move. Don't let a good or red treat hit the ground - rotten (brown) treats are safe to miss!
+        Use ← → to move. Don't let a good or red treat hit the ground! Rotten (brown) treats are safe to miss but
+        cost 5 points if caught. Red treats start after 30s.
       </p>
     </div>
   );
