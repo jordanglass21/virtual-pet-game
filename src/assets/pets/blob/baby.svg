@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <rect x="4" y="4" width="192" height="192" fill="#eafce0" stroke="#7CFC00" stroke-width="4" stroke-dasharray="10 6" rx="12"/>
-  <circle cx="100" cy="110" r="55" fill="#a8e065" stroke="#4E9A06" stroke-width="4"/>
-  <circle cx="82" cy="100" r="7" fill="#111"/>
-  <circle cx="118" cy="100" r="7" fill="#111"/>
-  <path d="M85 122 Q100 132 115 122" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <text x="100" y="40" text-anchor="middle" font-family="monospace" font-size="14" fill="#333">PLACEHOLDER</text>
-  <text x="100" y="180" text-anchor="middle" font-family="monospace" font-size="16" fill="#333">Blob (baby)</text>
-</svg>
