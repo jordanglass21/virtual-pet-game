@@ -2,9 +2,9 @@ import { SAVE_KEY, SAVE_VERSION } from '../data/constants.js';
 import { createInitialState } from './initialState.js';
 
 // One-time remap for the species ids renamed when their real artwork
-// replaced the placeholders (blob -> golgar, dragon -> worm), so existing
-// saves keep pointing at a species that still exists.
-const SPECIES_ID_MIGRATIONS = { blob: 'golgar', dragon: 'worm' };
+// replaced the placeholders (blob -> golgar, dragon -> worm, cat -> venus),
+// so existing saves keep pointing at a species that still exists.
+const SPECIES_ID_MIGRATIONS = { blob: 'golgar', dragon: 'worm', cat: 'venus' };
 
 function migrateSpeciesId(id) {
   return SPECIES_ID_MIGRATIONS[id] ?? id;

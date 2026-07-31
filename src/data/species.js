@@ -1,7 +1,7 @@
 import golgarBaby from '../assets/pets/golgar/baby.png';
 import golgarAdult from '../assets/pets/golgar/adult.png';
-import catBaby from '../assets/pets/cat/baby.svg';
-import catAdult from '../assets/pets/cat/adult.svg';
+import venusBaby from '../assets/pets/venus/baby.png';
+import venusAdult from '../assets/pets/venus/adult.png';
 import wormBaby from '../assets/pets/worm/baby.png';
 import wormAdult from '../assets/pets/worm/adult.png';
 
@@ -16,12 +16,12 @@ export const SPECIES = {
     decayPerMin: { hunger: 1.2, happiness: 0.6, energy: 0.4, cleanliness: 0.5 },
     images: { baby: golgarBaby, adult: golgarAdult },
   },
-  cat: {
-    id: 'cat',
-    name: 'Kit',
+  venus: {
+    id: 'venus',
+    name: 'Venus',
     tagline: 'Aloof, but playful in bursts',
     decayPerMin: { hunger: 0.8, happiness: 0.9, energy: 0.6, cleanliness: 0.7 },
-    images: { baby: catBaby, adult: catAdult },
+    images: { baby: venusBaby, adult: venusAdult },
   },
   worm: {
     id: 'worm',
