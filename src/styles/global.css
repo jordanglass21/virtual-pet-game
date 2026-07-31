@@ -294,6 +294,13 @@ h1, h2, h3 {
   bottom: 6%;
   transform: translateX(-50%);
   z-index: 5;
+  /* The pet has no click behavior of its own, and its source art has
+     generous transparent padding baked in, so its hit box is bigger than
+     the visible character - without this, that invisible padding (and
+     every wrapper div around it) would steal drag clicks from furniture
+     (e.g. the wall slot) behind it. Clothing badges opt back in below,
+     since those still need to be draggable. */
+  pointer-events: none;
 }
 
 .pet-sprite {
@@ -304,6 +311,12 @@ h1, h2, h3 {
 .furniture-item {
   position: absolute;
   z-index: 2;
+  cursor: grab;
+  touch-action: none;
+}
+
+.furniture-item:active {
+  cursor: grabbing;
 }
 
 .furniture-floor-left {
@@ -320,20 +333,21 @@ h1, h2, h3 {
   height: 24%;
 }
 
+/* Pre-centered left offsets (50% - width/2) instead of left:50% +
+   transform:translateX(-50%), same reasoning as the clothing badges:
+   react-draggable's own inline transform would wipe out a CSS one. */
 .furniture-wall {
-  left: 50%;
+  left: 37%;
   top: 6%;
   width: 26%;
   height: 22%;
-  transform: translateX(-50%);
 }
 
 .furniture-rug {
-  left: 50%;
+  left: 22.5%;
   bottom: 2%;
   width: 55%;
   height: 16%;
-  transform: translateX(-50%);
   z-index: 1;
 }
 
@@ -342,6 +356,7 @@ h1, h2, h3 {
   aspect-ratio: 1;
   cursor: grab;
   touch-action: none;
+  pointer-events: auto; /* re-enable: an ancestor (.pet-stage-sprite) opts out */
 }
 
 .clothing-badge:active {

@@ -94,6 +94,7 @@ function GameScreen({ onOpenMiniGame }) {
         pet={pet}
         room={state.room}
         clothingPositions={state.clothingPositions}
+        furniturePositions={state.furniturePositions}
         activeActivity={activeActivity}
         onActivityComplete={handleActivityComplete}
         isEvolving={evolving}

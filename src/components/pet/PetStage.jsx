@@ -4,16 +4,50 @@ import FurnitureItem from '../room/FurnitureItem.jsx';
 import PetSprite from './PetSprite.jsx';
 import ActivityOverlay from '../activity/ActivityOverlay.jsx';
 
-export default function PetStage({ pet, room, clothingPositions, activeActivity, onActivityComplete, isEvolving }) {
+export default function PetStage({
+  pet,
+  room,
+  clothingPositions,
+  furniturePositions,
+  activeActivity,
+  onActivityComplete,
+  isEvolving,
+}) {
   const petTargetRef = useRef(null);
+
+  // Keyed by item, not just slot, so swapping to a different item in the
+  // same slot remounts with that item's own saved position.
+  function furnitureKey(slot, itemId) {
+    return `${slot}-${itemId ?? 'empty'}`;
+  }
 
   return (
     <div className="pet-stage">
       <RoomBackground backgroundId={room.backgroundId} />
-      <FurnitureItem slot="wall" itemId={room.furniture.wall} />
-      <FurnitureItem slot="rug" itemId={room.furniture.rug} />
-      <FurnitureItem slot="floorLeft" itemId={room.furniture.floorLeft} />
-      <FurnitureItem slot="floorRight" itemId={room.furniture.floorRight} />
+      <FurnitureItem
+        key={furnitureKey('wall', room.furniture.wall)}
+        slot="wall"
+        itemId={room.furniture.wall}
+        position={furniturePositions?.[room.furniture.wall]}
+      />
+      <FurnitureItem
+        key={furnitureKey('rug', room.furniture.rug)}
+        slot="rug"
+        itemId={room.furniture.rug}
+        position={furniturePositions?.[room.furniture.rug]}
+      />
+      <FurnitureItem
+        key={furnitureKey('floorLeft', room.furniture.floorLeft)}
+        slot="floorLeft"
+        itemId={room.furniture.floorLeft}
+        position={furniturePositions?.[room.furniture.floorLeft]}
+      />
+      <FurnitureItem
+        key={furnitureKey('floorRight', room.furniture.floorRight)}
+        slot="floorRight"
+        itemId={room.furniture.floorRight}
+        position={furniturePositions?.[room.furniture.floorRight]}
+      />
       <div className="pet-stage-sprite" ref={petTargetRef}>
         <PetSprite
           speciesId={pet.speciesId}
