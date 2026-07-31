@@ -170,8 +170,47 @@ export function MeadowBackground() {
   );
 }
 
+// The free starting background, before any background has been bought -
+// a plain little meadow so the room isn't just a blank panel.
 export function DefaultBackground() {
-  return <div style={{ width: '100%', height: '100%', background: 'var(--panel)' }} />;
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(to bottom, #a9ddf7 0%, #a9ddf7 58%, #9ed16a 58%, #9ed16a 100%)',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: '10%',
+          right: '14%',
+          width: '18%',
+          aspectRatio: '1',
+          borderRadius: '50%',
+          background: '#fff2a8',
+          boxShadow: '0 0 10px 4px rgba(255, 242, 168, 0.7)',
+        }}
+      />
+      {[['22%', '78%'], ['42%', '88%'], ['65%', '82%'], ['80%', '92%']].map(([left, top], i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            left,
+            top,
+            width: '5%',
+            aspectRatio: '1',
+            borderRadius: '50%',
+            background: i % 2 === 0 ? '#ffffff' : '#ffd400',
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 // Adult-exclusive items.

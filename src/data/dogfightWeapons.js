@@ -23,7 +23,7 @@ export const WEAPONS = {
     kind: 'forward',
     pelletCount: 1,
     spreadDeg: 0,
-    damage: 8,
+    damage: 6,
     range: 999,
     fireIntervalMs: 480,
     projectileSpeed: 260,

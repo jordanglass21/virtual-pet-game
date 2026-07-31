@@ -93,9 +93,7 @@ function GameScreen({ onOpenMiniGame }) {
         onActivityComplete={handleActivityComplete}
         isEvolving={evolving}
       />
-      <p style={{ textAlign: 'center' }}>
-        {pet.name} the {pet.stage}
-      </p>
+      <p style={{ textAlign: 'center' }}>{pet.name}</p>
       <p style={{ textAlign: 'center', fontSize: 11 }}>Score: {computePetScore(pet, Date.now())}</p>
       {pet.justWokeRested && <p className="sleep-bonus-indicator">✨ {pet.name} had a great nap! +happiness</p>}
       {mood === 'critical' && <p className="critical-warning">⚠ {pet.name} urgently needs your help!</p>}
