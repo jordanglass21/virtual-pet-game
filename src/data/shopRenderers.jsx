@@ -4,6 +4,8 @@
 import desertImg from '../assets/backgrounds/desert.jpg';
 import fortressImg from '../assets/backgrounds/fortress.jpg';
 import oceanImg from '../assets/backgrounds/ocean.jpg';
+import spaceImg from '../assets/backgrounds/space.jpg';
+import ritualGroundsImg from '../assets/backgrounds/ritual_grounds.jpg';
 
 // Real illustrated backgrounds (as opposed to the CSS/SVG ones below) - each
 // is a species' native default background, but purchasable by anyone.
@@ -26,6 +28,8 @@ function makeImageBackground(src) {
 export const DesertBackground = makeImageBackground(desertImg);
 export const FortressBackground = makeImageBackground(fortressImg);
 export const OceanBackground = makeImageBackground(oceanImg);
+export const SpaceBackground = makeImageBackground(spaceImg);
+export const RitualGroundsBackground = makeImageBackground(ritualGroundsImg);
 
 export function PartyHatIcon() {
   return (
@@ -171,19 +175,6 @@ export function BeachBackground() {
   );
 }
 
-export function SpaceBackground() {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background:
-          'radial-gradient(circle at 20% 30%, #fff 1px, transparent 1.5px), radial-gradient(circle at 70% 60%, #fff 1px, transparent 1.5px), radial-gradient(circle at 45% 80%, #fff 1px, transparent 1.5px), #0b0b2e',
-      }}
-    />
-  );
-}
-
 export function MeadowBackground() {
   return (
     <div
@@ -295,29 +286,3 @@ export function McGuffinIcon() {
   );
 }
 
-export function RitualGroundsBackground() {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'relative',
-        background: 'linear-gradient(to bottom, #1a1030 0%, #1a1030 55%, #2b1b45 55%, #2b1b45 100%)',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: '18%',
-          width: '55%',
-          height: '30%',
-          transform: 'translateX(-50%)',
-          borderRadius: '50%',
-          border: '3px solid #c99bf0',
-          boxShadow: '0 0 12px 4px rgba(201, 155, 240, 0.6)',
-        }}
-      />
-    </div>
-  );
-}
