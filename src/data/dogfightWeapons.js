@@ -12,7 +12,7 @@ export const WEAPONS = {
     spreadDeg: 55,
     damage: 7,
     range: 75,
-    fireIntervalMs: 650,
+    fireIntervalMs: 1000,
     projectileSpeed: 190,
     preferredDistance: 55,
   },

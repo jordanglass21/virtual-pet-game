@@ -10,7 +10,9 @@ const ARENA_WIDTH = 220;
 const ARENA_HEIGHT = 200;
 const SHIP_RADIUS = 9;
 const SHIP_SPEED = 110; // px/s
-const AI_SPEED = 85; // px/s - slightly slower than the player for fairness
+const AI_SPEED = 100; // px/s - close to the player's speed, so it can hold position and dodge
+const AI_DODGE_LOOKAHEAD_S = 0.6;
+const AI_DODGE_MARGIN = 18;
 const MAX_HEALTH = 100;
 const PROJECTILE_RADIUS = 3;
 const BOMB_RADIUS = 6;
@@ -164,10 +166,47 @@ export default function DogfightGame({ onFinish }) {
         game.player.x = clamp(game.player.x + dx * SHIP_SPEED * dt, SHIP_RADIUS, ARENA_WIDTH - SHIP_RADIUS);
         game.player.y = clamp(game.player.y + dy * SHIP_SPEED * dt, SHIP_RADIUS, ARENA_HEIGHT - SHIP_RADIUS);
 
-        // AI movement: steer toward a spot that suits its own weapon.
+        // Incoming-fire detection: if a player shot or bomb is about to hit,
+        // the AI dodges instead of holding its usual weapon position.
+        let dodge = null;
+        for (const proj of game.projectiles) {
+          if (proj.owner !== 'player') continue;
+          if (proj.kind === 'bomb') {
+            const gap = proj.x - game.ai.x;
+            if (proj.vy > 0 && Math.abs(gap) < SHIP_RADIUS + BOMB_RADIUS + AI_DODGE_MARGIN) {
+              const away = gap === 0 ? 1 : -Math.sign(gap);
+              dodge = { x: game.ai.x + away * 60, y: game.ai.y };
+              break;
+            }
+          } else {
+            const relX = game.ai.x - proj.x;
+            const relY = game.ai.y - proj.y;
+            const speedSq = proj.vx * proj.vx + proj.vy * proj.vy;
+            if (speedSq === 0) continue;
+            const t = clamp((relX * proj.vx + relY * proj.vy) / speedSq, 0, AI_DODGE_LOOKAHEAD_S);
+            const closestX = proj.x + proj.vx * t;
+            const closestY = proj.y + proj.vy * t;
+            const closeDist = Math.hypot(closestX - game.ai.x, closestY - game.ai.y);
+            if (t < AI_DODGE_LOOKAHEAD_S && closeDist < SHIP_RADIUS + PROJECTILE_RADIUS + AI_DODGE_MARGIN) {
+              const side = relX * proj.vy - relY * proj.vx >= 0 ? 1 : -1;
+              const perpLen = Math.hypot(proj.vx, proj.vy) || 1;
+              dodge = {
+                x: game.ai.x + (-proj.vy / perpLen) * side * 60,
+                y: game.ai.y + (proj.vx / perpLen) * side * 60,
+              };
+              break;
+            }
+          }
+        }
+
+        // AI movement: steer toward a spot that suits its own weapon, unless
+        // it needs to dodge incoming fire first.
         let desiredX = game.ai.x;
         let desiredY = game.ai.y;
-        if (aiWeapon.kind === 'bomb') {
+        if (dodge) {
+          desiredX = dodge.x;
+          desiredY = dodge.y;
+        } else if (aiWeapon.kind === 'bomb') {
           desiredX = game.player.x;
           desiredY = SHIP_RADIUS + 4;
         } else {
