@@ -5,9 +5,22 @@ import { useGameDispatch } from '../../state/GameContext.jsx';
 export default function SpeciesSelect() {
   const dispatch = useGameDispatch();
   const [speciesId, setSpeciesId] = useState(SPECIES_LIST[0].id);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(SPECIES_LIST[0].name);
+  const [nameTouched, setNameTouched] = useState(false);
 
   const canStart = name.trim().length > 0;
+
+  function handleSelectSpecies(species) {
+    setSpeciesId(species.id);
+    // Keep the name in sync with the species until the player types their
+    // own, so Start works immediately without requiring a custom name.
+    if (!nameTouched) setName(species.name);
+  }
+
+  function handleNameChange(e) {
+    setNameTouched(true);
+    setName(e.target.value);
+  }
 
   function handleStart() {
     if (!canStart) return;
@@ -26,7 +39,7 @@ export default function SpeciesSelect() {
             type="button"
             key={species.id}
             className={`species-card${species.id === speciesId ? ' selected' : ''}`}
-            onClick={() => setSpeciesId(species.id)}
+            onClick={() => handleSelectSpecies(species)}
           >
             <img src={species.images.baby} alt={species.name} />
             <div>
@@ -46,7 +59,7 @@ export default function SpeciesSelect() {
           type="text"
           value={name}
           maxLength={16}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
           style={{ fontFamily: 'var(--font-body)', padding: 4, width: '100%' }}
         />
       </div>
