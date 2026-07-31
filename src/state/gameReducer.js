@@ -117,9 +117,14 @@ export function gameReducer(state, action) {
     case 'SELECT_SPECIES': {
       const { speciesId, name } = action.payload;
       const at = action.payload.now;
+      const defaultBackgroundId = SPECIES[speciesId].defaultBackgroundId;
       return {
         ...state,
         onboardingComplete: true,
+        room: { ...state.room, backgroundId: defaultBackgroundId },
+        inventory: state.inventory.includes(defaultBackgroundId)
+          ? state.inventory
+          : [...state.inventory, defaultBackgroundId],
         pet: {
           speciesId,
           name,

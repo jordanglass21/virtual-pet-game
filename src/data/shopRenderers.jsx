@@ -1,6 +1,32 @@
 // Small, self-contained CSS/SVG icon components for shop items. Each is
 // sized by its container (badge overlay, shop card preview, or room slot).
 
+import desertImg from '../assets/backgrounds/desert.jpg';
+import fortressImg from '../assets/backgrounds/fortress.jpg';
+import oceanImg from '../assets/backgrounds/ocean.jpg';
+
+// Real illustrated backgrounds (as opposed to the CSS/SVG ones below) - each
+// is a species' native default background, but purchasable by anyone.
+function makeImageBackground(src) {
+  return function ImageBackground() {
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundImage: `url(${src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+    );
+  };
+}
+
+export const DesertBackground = makeImageBackground(desertImg);
+export const FortressBackground = makeImageBackground(fortressImg);
+export const OceanBackground = makeImageBackground(oceanImg);
+
 export function PartyHatIcon() {
   return (
     <svg viewBox="0 0 48 48" width="100%" height="100%">

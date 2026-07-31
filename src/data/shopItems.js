@@ -20,6 +20,9 @@ import {
   CastleBackground,
   McGuffinIcon,
   RitualGroundsBackground,
+  DesertBackground,
+  FortressBackground,
+  OceanBackground,
 } from './shopRenderers.jsx';
 
 // Required to trigger the baby-to-adult evolution ritual: the McGuffin must
@@ -84,6 +87,12 @@ export const SHOP_ITEMS = [
     price: 150,
     Render: RitualGroundsBackground,
   },
+  // Each of these is a species' free native default (see SPECIES in
+  // species.js) but purchasable here by anyone who wants a different pet's
+  // homeland background.
+  { id: 'bg_desert', category: 'background', name: 'Desert', price: 200, Render: DesertBackground },
+  { id: 'bg_fortress', category: 'background', name: 'Fortress', price: 200, Render: FortressBackground },
+  { id: 'bg_ocean', category: 'background', name: 'Ocean', price: 200, Render: OceanBackground },
 ];
 
 export const SHOP_ITEMS_BY_ID = Object.fromEntries(SHOP_ITEMS.map((item) => [item.id, item]));

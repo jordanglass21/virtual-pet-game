@@ -15,6 +15,7 @@ export const SPECIES = {
     tagline: 'Cheerful and food-obsessed',
     decayPerMin: { hunger: 1.2, happiness: 0.6, energy: 0.4, cleanliness: 0.5 },
     images: { baby: golgarBaby, adult: golgarAdult },
+    defaultBackgroundId: 'bg_fortress',
   },
   venus: {
     id: 'venus',
@@ -22,6 +23,7 @@ export const SPECIES = {
     tagline: 'Aloof, but playful in bursts',
     decayPerMin: { hunger: 0.8, happiness: 0.9, energy: 0.6, cleanliness: 0.7 },
     images: { baby: venusBaby, adult: venusAdult },
+    defaultBackgroundId: 'bg_ocean',
   },
   worm: {
     id: 'worm',
@@ -29,6 +31,7 @@ export const SPECIES = {
     tagline: 'Sleepy and high-maintenance',
     decayPerMin: { hunger: 1.0, happiness: 0.7, energy: 0.9, cleanliness: 0.4 },
     images: { baby: wormBaby, adult: wormAdult },
+    defaultBackgroundId: 'bg_desert',
   },
 };
 
