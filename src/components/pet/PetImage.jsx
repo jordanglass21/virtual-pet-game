@@ -3,7 +3,7 @@ import { getPetMood } from '../../utils/petMood.js';
 
 export default function PetImage({ speciesId, stage, stats, isSleeping, isEvolving }) {
   const species = SPECIES[speciesId];
-  const mood = stats ? getPetMood(stats, isSleeping) : 'neutral';
+  const mood = stats ? getPetMood(stats, isSleeping, stage) : 'neutral';
 
   return (
     <div className="pet-image-frame">

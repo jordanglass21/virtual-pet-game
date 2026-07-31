@@ -45,7 +45,7 @@ function GameScreen({ onOpenMiniGame }) {
   }
 
   const isSleeping = Boolean(pet.sleep?.isSleeping);
-  const mood = getPetMood(pet.stats, isSleeping);
+  const mood = getPetMood(pet.stats, isSleeping, pet.stage);
   const readyToEvolve = pet.stage === 'baby' && pet.growth >= EVOLVE_THRESHOLD;
   const hasMcGuffin = pet.equipped.accessory === MCGUFFIN_ID;
   const hasRitualGrounds = state.room.backgroundId === RITUAL_GROUNDS_ID;

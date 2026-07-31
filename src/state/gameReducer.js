@@ -22,8 +22,11 @@ import {
 } from '../data/constants.js';
 import { clamp, isSameCalendarDay } from '../utils/time.js';
 
-// A pet dies once at least 2 of its 4 stats bottom out at zero.
-const DEATH_ZERO_STAT_COUNT = 2;
+// Babies are fragile - a single stat bottoming out is fatal. Adults are
+// hardier and can survive one stat hitting zero, dying only once a second
+// one joins it.
+const BABY_DEATH_ZERO_STAT_COUNT = 1;
+const ADULT_DEATH_ZERO_STAT_COUNT = 2;
 
 function applyDecay(pet, atTime) {
   const species = SPECIES[pet.speciesId];
@@ -72,7 +75,8 @@ function applySleepTransition(pet, atTime) {
 
 function isDead(pet) {
   const zeroCount = Object.values(pet.stats).filter((v) => v <= STAT_MIN).length;
-  return zeroCount >= DEATH_ZERO_STAT_COUNT;
+  const threshold = pet.stage === 'adult' ? ADULT_DEATH_ZERO_STAT_COUNT : BABY_DEATH_ZERO_STAT_COUNT;
+  return zeroCount >= threshold;
 }
 
 function buildMemoriamEntry(pet, now) {
