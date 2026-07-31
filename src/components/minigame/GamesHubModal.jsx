@@ -21,6 +21,8 @@ const GAMES = [
     description:
       'Pick Scatter Shot, Assault Shot, or the Bomb - the enemy picks at random. Battle it out to 0 health!',
     GameComponent: DogfightGame,
+    statLabel: (state) =>
+      `Win streak: ${state.miniGames.dogfight?.winStreak ?? 0} (Best: ${state.miniGames.dogfight?.maxWinStreak ?? 0})`,
   },
   {
     key: 'petRun',
@@ -54,6 +56,7 @@ export default function GamesHubModal({ onClose }) {
         description={game.description}
         gameKey={game.key}
         GameComponent={game.GameComponent}
+        statLabel={game.statLabel}
         onClose={onClose}
       />
     );

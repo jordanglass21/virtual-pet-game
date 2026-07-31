@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useGameDispatch } from '../../state/GameContext.jsx';
+import { useGameDispatch, useGameState } from '../../state/GameContext.jsx';
 import { WEAPONS, WEAPON_LIST, pickAiWeaponId } from '../../data/dogfightWeapons.js';
 
 // Top-down 1v1 dogfight. "forward" weapons auto-aim at the opponent's
@@ -10,13 +10,14 @@ const ARENA_WIDTH = 220;
 const ARENA_HEIGHT = 200;
 const SHIP_RADIUS = 9;
 const SHIP_SPEED = 110; // px/s
-const AI_SPEED = 100; // px/s - close to the player's speed, so it can hold position and dodge
-const AI_DODGE_LOOKAHEAD_S = 0.6;
-const AI_DODGE_MARGIN = 18;
+const AI_SPEED = 112; // px/s - just above the player's speed
+const AI_DODGE_LOOKAHEAD_S = 0.7;
+const AI_DODGE_MARGIN = 22;
 const MAX_HEALTH = 100;
 const PROJECTILE_RADIUS = 3;
 const BOMB_RADIUS = 6;
 const WIN_BONUS = 20;
+const STREAK_BONUS_PER_WIN = 5;
 
 let nextProjectileId = 0;
 
@@ -34,12 +35,14 @@ function makeInitialGame() {
     playerFireNextAt: 0,
     aiFireNextAt: 0,
     projectiles: [],
-    damageDealtByPlayer: 0,
   };
 }
 
 export default function DogfightGame({ onFinish }) {
   const dispatch = useGameDispatch();
+  const state = useGameState();
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const gameRef = useRef(null);
   if (!gameRef.current) gameRef.current = makeInitialGame();
 
@@ -90,16 +93,25 @@ export default function DogfightGame({ onFinish }) {
     let lastTime = performance.now();
     const game = gameRef.current;
 
-    function endMatch(playerWon) {
+    function endMatch(outcome) {
       if (stopped) return;
       stopped = true;
-      const score = Math.round(game.damageDealtByPlayer);
-      const payout = Math.round(score / 5) + (playerWon ? WIN_BONUS : 0);
+      const prev = stateRef.current.miniGames.dogfight ?? { winStreak: 0, maxWinStreak: 0 };
+      let winStreak = prev.winStreak ?? 0;
+      let payout = 0;
+      if (outcome === 'win') {
+        winStreak += 1;
+        payout = WIN_BONUS + STREAK_BONUS_PER_WIN * (winStreak - 1);
+      } else if (outcome === 'lose') {
+        winStreak = 0;
+      }
+      // A tie leaves the streak untouched - it's neither a win nor a loss.
+      const maxWinStreak = Math.max(prev.maxWinStreak ?? 0, winStreak);
       dispatchRef.current({
-        type: 'RECORD_MINIGAME_RESULT',
-        payload: { game: 'dogfight', score, payout },
+        type: 'RECORD_DOGFIGHT_RESULT',
+        payload: { outcome, payout, winStreak, maxWinStreak },
       });
-      onFinishRef.current({ score, payout, outcome: playerWon ? 'win' : 'lose' });
+      onFinishRef.current({ payout, outcome, winStreak, maxWinStreak });
     }
 
     function fireForward(shooter, weapon, targetX, targetY, owner) {
@@ -143,6 +155,9 @@ export default function DogfightGame({ onFinish }) {
       ];
     }
 
+    let prevPlayerX = game.player.x;
+    let prevPlayerY = game.player.y;
+
     function tick(now) {
       if (stopped) return;
       const dt = Math.min(0.05, (now - lastTime) / 1000);
@@ -165,6 +180,13 @@ export default function DogfightGame({ onFinish }) {
         }
         game.player.x = clamp(game.player.x + dx * SHIP_SPEED * dt, SHIP_RADIUS, ARENA_WIDTH - SHIP_RADIUS);
         game.player.y = clamp(game.player.y + dy * SHIP_SPEED * dt, SHIP_RADIUS, ARENA_HEIGHT - SHIP_RADIUS);
+
+        // Track the player's velocity so the AI can lead its forward shots
+        // instead of aiming at where the player already was.
+        const playerVelX = dt > 0 ? (game.player.x - prevPlayerX) / dt : 0;
+        const playerVelY = dt > 0 ? (game.player.y - prevPlayerY) / dt : 0;
+        prevPlayerX = game.player.x;
+        prevPlayerY = game.player.y;
 
         // Incoming-fire detection: if a player shot or bomb is about to hit,
         // the AI dodges instead of holding its usual weapon position.
@@ -244,10 +266,18 @@ export default function DogfightGame({ onFinish }) {
         }
         if (now >= game.aiFireNextAt) {
           game.aiFireNextAt = now + aiWeapon.fireIntervalMs;
+          let aimX = game.player.x;
+          let aimY = game.player.y;
+          if (aiWeapon.kind !== 'bomb') {
+            // Lead the shot: aim at where the player should be once the
+            // pellet arrives, instead of where they are right now.
+            const distToPlayer = Math.hypot(game.player.x - game.ai.x, game.player.y - game.ai.y);
+            const leadTime = distToPlayer / aiWeapon.projectileSpeed;
+            aimX = game.player.x + playerVelX * leadTime;
+            aimY = game.player.y + playerVelY * leadTime;
+          }
           const newShots =
-            aiWeapon.kind === 'bomb'
-              ? fireBomb(game.ai, aiWeapon, 'ai')
-              : fireForward(game.ai, aiWeapon, game.player.x, game.player.y, 'ai');
+            aiWeapon.kind === 'bomb' ? fireBomb(game.ai, aiWeapon, 'ai') : fireForward(game.ai, aiWeapon, aimX, aimY, 'ai');
           game.projectiles.push(...newShots);
         }
 
@@ -266,7 +296,13 @@ export default function DogfightGame({ onFinish }) {
 
           if (hit) {
             target.health = Math.max(0, target.health - proj.damage);
-            if (proj.owner === 'player') game.damageDealtByPlayer += proj.damage;
+            if (proj.kind === 'bomb') {
+              // Dropping a bomb while right on top of your target catches
+              // your own ship in the blast too - a tie, not a clean win.
+              const shooter = proj.owner === 'player' ? game.player : game.ai;
+              const shipsIntersect = (shooter.x - target.x) ** 2 + (shooter.y - target.y) ** 2 <= (SHIP_RADIUS * 2) ** 2;
+              if (shipsIntersect) shooter.health = 0;
+            }
             continue;
           }
           if (proj.traveled > proj.maxRange) continue;
@@ -275,14 +311,20 @@ export default function DogfightGame({ onFinish }) {
         }
         game.projectiles = survivors;
 
+        if (game.ai.health <= 0 && game.player.health <= 0) {
+          setAi({ ...game.ai });
+          setPlayer({ ...game.player });
+          endMatch('tie');
+          return;
+        }
         if (game.ai.health <= 0) {
           setAi({ ...game.ai });
-          endMatch(true);
+          endMatch('win');
           return;
         }
         if (game.player.health <= 0) {
           setPlayer({ ...game.player });
-          endMatch(false);
+          endMatch('lose');
           return;
         }
 

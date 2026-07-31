@@ -271,6 +271,33 @@ export function gameReducer(state, action) {
       };
     }
 
+    case 'RECORD_DOGFIGHT_RESULT': {
+      const { payout, winStreak, maxWinStreak } = action.payload;
+
+      let pet = state.pet;
+      if (pet) {
+        pet = {
+          ...pet,
+          stats: {
+            ...pet.stats,
+            happiness: clamp(pet.stats.happiness + MINIGAME_HAPPINESS_BONUS, STAT_MIN, STAT_MAX),
+          },
+          growth: pet.growth + MINIGAME_GROWTH_BONUS,
+          totalEarned: pet.totalEarned + payout,
+        };
+      }
+
+      return {
+        ...state,
+        pet,
+        currency: state.currency + payout,
+        miniGames: {
+          ...state.miniGames,
+          dogfight: { winStreak, maxWinStreak },
+        },
+      };
+    }
+
     case 'SLOT_SPIN': {
       const { bet, payout } = action.payload;
       if (bet > state.currency) return state;
